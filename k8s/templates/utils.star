@@ -13,7 +13,11 @@ if not (data.values.environment == "test" or data.values.environment == "pre-rel
 end
 
 def namespaceName():
-  return data.values.projectName+"-"+data.values.environment
+  if data.values.namespace:
+    return data.values.namespace+"-"+data.values.environment
+  else:
+    return data.values.projectName+"-"+data.values.environment
+  end
 end
 
 def deployName():

@@ -1,14 +1,15 @@
 {
   "cSpell.words": [
     "Autoscaler",
-    "CICD",
-    "Interop",
     "binpar",
     "camelcase",
+    "CICD",
     "esnext",
     "healthcheck",
+    "Interop",
     "kubernetes",
     "letsencrypt",
-    "plusplus"
+    "plusplus",
+    "preinstall"
   ]
 }

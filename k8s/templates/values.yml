@@ -2,3 +2,4 @@
 ---
 projectName: bpt-next
 productionDomain: bpt-next.binpar.cloud
+namespace: "bpt-default-namespace"
