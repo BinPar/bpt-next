@@ -1,0 +1,44 @@
+#@ load("@ytt:data", "data")
+#@ load("utils.star", "utils")
+
+#@ def getDeploy():
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: #@ utils.deployName()
+  labels: #@ utils.defaultLabels("deploy")
+  namespace: #@ utils.namespaceName()
+spec:
+  replicas: #@ 4 if utils.isRelease() else 2
+  revisionHistoryLimit: #@ 4 if utils.isRelease() else 2
+  selector:
+    matchLabels: #@ utils.defaultLabels("service")
+  template:
+    metadata:
+      labels: #@ utils.defaultLabels("pod")
+    spec:
+      containers:
+        - image: #@ utils.imageName()
+          name: app
+          envFrom:
+            - configMapRef:
+                name: #@ utils.defaultConfigMapName()
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: #@ data.values.healthcheckPath
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: #@ data.values.initialDelaySeconds
+            failureThreshold: #@ data.values.failureThreshold
+            timeoutSeconds: #@ data.values.timeoutSeconds
+            periodSeconds: #@ data.values.periodSeconds
+          resources:
+            requests:
+              memory: #@ "128Mi" if utils.isRelease() else "64Mi"
+              cpu: '50m'
+            limits:
+              memory: #@ "512Mi" if utils.isRelease() else "256Mi"
+              cpu: #@ "1000m" if utils.isRelease() else "500m"
+#@ end

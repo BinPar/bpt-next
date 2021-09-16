@@ -1,0 +1,16 @@
+#@ load("@ytt:data", "data")
+#@ load("@ytt:template", "template")
+#@ load("utils.star", "utils")
+
+#@ def getConfigMap():
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: #@ utils.defaultConfigMapName()
+  namespace: #@ utils.namespaceName()
+data:
+  PRIVATE_URL: #@ utils.serviceName()
+  CLUSTER_URL: #@ utils.serviceName()+"."+utils.namespaceName()+".svc.cluster.local"
+  #@ if/end data.values.defaultConfig:
+  config: #@ template.replace(data.values.defaultConfig)
+#@ end
