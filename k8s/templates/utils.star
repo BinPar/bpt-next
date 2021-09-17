@@ -33,7 +33,7 @@ def ingressName():
 end
 
 def imageName():
-  return "402083338966.dkr.ecr.eu-west-1.amazonaws.com/"+data.values.projectName+":latest"
+  return "402083338966.dkr.ecr.eu-west-1.amazonaws.com/"+data.values.projectName+":"+data.values.environment
 end
 
 def certificateName():
