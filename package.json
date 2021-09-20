@@ -4,7 +4,7 @@
   "description": "NextJS - BinPar Template",
   "scripts": {
     "dev": "next dev",
-    "preinstall": "nvm install && nvm use",
+    "useNodeLTS": ". ~/.nvm/nvm.sh && nvm install && nvm use",
     "build": "next build",
     "start": "next start -p 80",
     "lint": "eslint \"**/*.{ts,tsx}\" --ignore-pattern node_modules/ --ignore-pattern prod_node_modules/",
