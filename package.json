@@ -1,6 +1,6 @@
 {
   "name": "bpt-next",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "NextJS - BinPar Template",
   "scripts": {
     "dev": "next dev",
@@ -8,10 +8,11 @@
     "build": "next build",
     "start": "next start -p 80",
     "lint": "eslint \"**/*.{ts,tsx}\" --ignore-pattern node_modules/ --ignore-pattern prod_node_modules/",
+    "typeCheck": "tsc -p ./tsconfig.json",
     "test": "jest",
     "test-coverage": "jest --coverage",
     "test-coverage-dev": "NODE_ENV=development jest --coverage --watchAll",
-    "test-dev": "NODE_ENV=development npx jest --watch"
+    "test-dev": "NODE_ENV=development jest --watch"
   },
   "homepage": "https://github.com/BinPar/bpt-next#readme",
   "author": "Marcos González <marcos@binpar.com> (https://www.binpar.com/)",
@@ -24,14 +25,33 @@
   },
   "license": "ISC",
   "dependencies": {
-    "next": "11.1.2",
-    "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "next": "^11",
+    "react": "^17",
+    "react-dom": "^17"
   },
   "devDependencies": {
-    "@types/react": "17.0.21",
-    "eslint": "7.32.0",
-    "eslint-config-next": "11.1.2",
-    "typescript": "4.4.3"
+    "@testing-library/jest-dom": "^5",
+    "@testing-library/react": "^12",
+    "@types/jest": "^27",
+    "@types/node": "^16",
+    "@types/react": "^17",
+    "@typescript-eslint/eslint-plugin": "^4",
+    "@typescript-eslint/parser": "^4",
+    "babel-jest": "^27",
+    "eslint": "^7",
+    "eslint-config-airbnb": "^18",
+    "eslint-config-airbnb-typescript": "^14",
+    "eslint-config-next": "^11",
+    "eslint-config-prettier": "^8",
+    "eslint-plugin-import": "^2",
+    "eslint-plugin-jest": "^24",
+    "eslint-plugin-jsx-a11y": "^6",
+    "eslint-plugin-promise": "^5",
+    "eslint-plugin-react": "^7",
+    "eslint-plugin-react-hooks": "^4",
+    "jest": "^27",
+    "jest-watch-typeahead": "^0.6.4",
+    "ts-jest": "^27",
+    "typescript": "^4"
   }
 }
