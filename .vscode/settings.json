@@ -11,5 +11,9 @@
     "letsencrypt",
     "plusplus",
     "preinstall"
-  ]
+  ],
+  "javascript.preferences.importModuleSpecifier": "non-relative",
+  "javascript.preferences.quoteStyle": "single",
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.preferences.quoteStyle": "single"
 }
