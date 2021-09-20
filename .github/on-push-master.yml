@@ -1,6 +1,9 @@
 name: Build, version and tag
 on:
   push:
+    paths-ignore:
+      - 'CHANGELOG.md'
+      - 'package.json'
     branches:
       - main
 jobs:
@@ -20,13 +23,20 @@ jobs:
       - name: NPM Install
         run: npm i
       - name: Get next version
-        run: echo "NEXT_VERSION=$(npm_config_yes=true npx standard-version --dry-run | head -n 1 | sed -n -e 's/.*bumping version in .* from .* to \(.*\).*/\1/p')" >> $GITHUB_ENV
+        run: echo "NEXT_VERSION=v$(npm_config_yes=true npx standard-version --dry-run | head -n 1 | sed -n -e 's/.*bumping version in .* from .* to \(.*\).*/\1/p')" >> $GITHUB_ENV
       - name: Read project name
         uses: KJ002/read-yaml@1.5
         id: project-name-data
         with:
           file: './k8s/templates/values.yml'
           key-path: '["projectName"]'
+      - name: Info new version
+        uses: rjstone/discord-webhook-notify@v1
+        with:
+          severity: info
+          details: 'About to build `${{ env.NEXT_VERSION }}` for project `${{ steps.project-name-data.outputs.data }}`'
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          avatarUrl: https://cdn.discordapp.com/avatars/839863605943205949/37ee1fdc2ea3909e3e1da4d109fbfa65.webp?size=256
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -63,3 +73,61 @@ jobs:
         run: rancher login --token ${{ secrets.RANCHER_TOKEN }} --context ${{ secrets.RANCHER_CONTEXT }} ${{ secrets.RANCHER_URL }}
       - name: Check k8s resources and create if not exists
         run: ./.github/create-k8s-if-not-exists.sh ${{ steps.env-names-data.outputs.data }}
+      - name: Exec standard-version and update repo
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          npm_config_yes=true npx standard-version
+          git push
+      - name: Read CHANGELOG
+        uses: BinPar/read-conventional-commit-changelog@v1
+        id: changelog
+        with:
+          version: '${{ env.NEXT_VERSION }}'
+      - name: Check out develop
+        uses: actions/checkout@v2
+        with:
+          path: develop
+          ref: develop
+      - name: Update develop changelog and package.json
+        run: |
+          cd develop
+          rm -rf CHANGELOG.md
+          cp ../CHANGELOG.md ./CHANGELOG.md
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          sed -i -e "s/\"version\": \"[^\"]*/\"version\": \"${NEXT_VERSION}/" ./package.json
+          git add .
+          git commit -m "chore(version): update version and changelog"
+          git push
+      - name: Tag docker image as test
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ steps.project-name-data.outputs.data }}
+        run: |
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$NEXT_VERSION $ECR_REGISTRY/$ECR_REPOSITORY:test
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:test
+      - name: Build tag and push success
+        uses: rjstone/discord-webhook-notify@v1
+        if: success()
+        with:
+          severity: info
+          details: "The `${{ env.NEXT_VERSION }}` for project `${{ steps.project-name-data.outputs.data }}` was successfully built and tagged. CHANGELOG.md and package.json were updated too.\n${{ steps.changelog.outputs.version-changelog }}"
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          avatarUrl: https://cdn.discordapp.com/avatars/839863605943205949/37ee1fdc2ea3909e3e1da4d109fbfa65.webp?size=256
+      - name: Build tag and push failed
+        uses: rjstone/discord-webhook-notify@v1
+        if: failure()
+        with:
+          severity: error
+          details: 'Build tag and push `${{ env.NEXT_VERSION }}` for project `${{ steps.project-name-data.outputs.data }}` failed'
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          avatarUrl: https://cdn.discordapp.com/avatars/839863605943205949/37ee1fdc2ea3909e3e1da4d109fbfa65.webp?size=256
+      - name: Build tag and push cancelled
+        uses: rjstone/discord-webhook-notify@v1
+        if: cancelled()
+        with:
+          severity: warn
+          details: 'Build tag and push `${{ env.NEXT_VERSION }}` for project `${{ steps.project-name-data.outputs.data }}` cancelled'
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          avatarUrl: https://cdn.discordapp.com/avatars/839863605943205949/37ee1fdc2ea3909e3e1da4d109fbfa65.webp?size=256
