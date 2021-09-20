@@ -9,6 +9,8 @@
     "start": "next start -p 80",
     "lint": "eslint \"**/*.{ts,tsx}\" --ignore-pattern node_modules/ --ignore-pattern prod_node_modules/",
     "typeCheck": "tsc -p ./tsconfig.json",
+    "setupUpdateFromTemplate": "git remote add template git@github.com:BinPar/bpt-next.git",
+    "updateFromTemplate": "git pull template main --allow-unrelated-histories --squash",
     "test": "jest",
     "test-coverage": "jest --coverage",
     "test-coverage-dev": "NODE_ENV=development jest --coverage --watchAll",
