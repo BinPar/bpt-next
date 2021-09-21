@@ -76,6 +76,7 @@ jobs:
           git config user.email github-actions@github.com
           npm_config_yes=true npx standard-version
           git push
+          git push --tags
       - name: Read CHANGELOG
         uses: BinPar/read-conventional-commit-changelog@v1
         id: changelog
