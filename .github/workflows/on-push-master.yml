@@ -23,7 +23,10 @@ jobs:
       - name: NPM Install
         run: npm i
       - name: Get next version
-        run: echo "NEXT_VERSION=v$(npm_config_yes=true npx standard-version --dry-run | head -n 1 | sed -n -e 's/.*bumping version in .* from .* to \(.*\).*/\1/p')" >> $GITHUB_ENV
+        run: |
+          NEXT_VERSION_WITHOUT_V=$(npm_config_yes=true npx standard-version --dry-run | head -n 1 | sed -n -e 's/.*bumping version in .* from .* to \(.*\).*/\1/p')
+          echo "NEXT_VERSION_WITHOUT_V=$NEXT_VERSION_WITHOUT_V" >> $GITHUB_ENV
+          echo "NEXT_VERSION=v$NEXT_VERSION_WITHOUT_V" >> $GITHUB_ENV
       - name: Read project name
         uses: KJ002/read-yaml@1.5
         id: project-name-data
@@ -90,7 +93,7 @@ jobs:
           cp ../CHANGELOG.md ./CHANGELOG.md
           git config user.name github-actions
           git config user.email github-actions@github.com
-          sed -i -e "s/\"version\": \"[^\"]*/\"version\": \"${NEXT_VERSION}/" ./package.json
+          sed -i -e "s/\"version\": \"[^\"]*/\"version\": \"${NEXT_VERSION_WITHOUT_V}/" ./package.json
           git add .
           git commit -m "chore(version): update version and changelog"
           git push
