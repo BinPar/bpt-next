@@ -39,6 +39,9 @@ jobs:
       - name: Login rancher
         run: rancher login --token ${{ secrets.RANCHER_TOKEN }} --context ${{ secrets.RANCHER_CONTEXT }} ${{ secrets.RANCHER_URL }}
       - name: Pull version docker image for tag
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ steps.project-name-data.outputs.data }}
         run: docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$NEXT_VERSION
       - name: Tag as pre-release
         if: 'github.event.release.prerelease'
