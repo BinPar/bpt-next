@@ -29,6 +29,15 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
+      - name: Setup Kubernetes Tools
+        uses: yokawasa/action-setup-kube-tools@v0.8.0
+        id: kubernetes-tools
+        with:
+          setup-tools: |
+            kubectl
+            rancher
+      - name: Login rancher
+        run: rancher login --token ${{ secrets.RANCHER_TOKEN }} --context ${{ secrets.RANCHER_CONTEXT }} ${{ secrets.RANCHER_URL }}
       - name: Tag as pre-release
         if: 'github.event.release.prerelease'
         env:
@@ -37,8 +46,9 @@ jobs:
         run: |
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$NEXT_VERSION $ECR_REGISTRY/$ECR_REPOSITORY:pre-release
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:pre-release
+          ./.github/workflows/create-k8s-if-not-exists.sh "pre-release"
           echo "TAG_TYPE=pre-release" >> $GITHUB_ENV
-      - name: Tag as pre-release
+      - name: Tag as release
         if: '!github.event.release.prerelease'
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -46,6 +56,7 @@ jobs:
         run: |
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$NEXT_VERSION $ECR_REGISTRY/$ECR_REPOSITORY:release
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:release
+          ./.github/workflows/create-k8s-if-not-exists.sh "release"
           echo "TAG_TYPE=release" >> $GITHUB_ENV
       - name: Tag image success
         uses: rjstone/discord-webhook-notify@v1
