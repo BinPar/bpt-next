@@ -8,8 +8,7 @@
     "next/core-web-vitals",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
-    "prettier",
-    "prettier/@typescript-eslint"
+    "prettier"
   ],
   "settings": {
     "import/extensions": [".js", ".jsx", ".ts", ".tsx"],
