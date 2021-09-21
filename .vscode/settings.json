@@ -10,7 +10,8 @@
     "kubernetes",
     "letsencrypt",
     "plusplus",
-    "preinstall"
+    "preinstall",
+    "wojtekmaj"
   ],
   "javascript.preferences.importModuleSpecifier": "non-relative",
   "javascript.preferences.quoteStyle": "single",
