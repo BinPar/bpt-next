@@ -5,6 +5,7 @@ projectName: ""
 namespace: ""
 productionDomain: ""
 environment: ""
+environments: ""
 healthcheckPath: "/healthcheck"
 initialDelaySeconds: 10
 failureThreshold: 2
