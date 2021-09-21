@@ -72,7 +72,7 @@ jobs:
       - name: Login rancher
         run: rancher login --token ${{ secrets.RANCHER_TOKEN }} --context ${{ secrets.RANCHER_CONTEXT }} ${{ secrets.RANCHER_URL }}
       - name: Check k8s resources and create if not exists
-        run: ./.github/workflows/create-k8s-if-not-exists.sh ${{ steps.env-names-data.outputs.data }}
+        run: ./.github/workflows/create-k8s-if-not-exists.sh "${{ steps.env-names-data.outputs.data }}"
       - name: Exec standard-version and update repo
         run: |
           git config user.name github-actions

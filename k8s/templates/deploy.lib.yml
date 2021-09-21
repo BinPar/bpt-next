@@ -12,7 +12,7 @@ spec:
   replicas: #@ 4 if utils.isRelease() else 2
   revisionHistoryLimit: #@ 4 if utils.isRelease() else 2
   selector:
-    matchLabels: #@ utils.defaultLabels("service")
+    matchLabels: #@ utils.defaultLabels("pod")
   template:
     metadata:
       labels: #@ utils.defaultLabels("pod")
