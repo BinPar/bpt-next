@@ -3,13 +3,32 @@
 projectName: ""
 #@schema/nullable
 namespace: ""
+defaultRootDomain: "binpar.cloud"
 productionDomain: ""
 environment: ""
 environments: ""
 healthcheckPath: "/healthcheck"
+baseReplicas: 2
+releaseFactorReplicas: 2
+baseRAMRequest: 64
+releaseFactorRAMRequest: 2
+baseRAMLimit: 256
+releaseFactorRAMLimit: 2
+baseCPURequest: 50
+releaseFactorCPURequest: 1
+baseCPULimit: 500
+releaseFactorCPULimit: 2
 initialDelaySeconds: 10
 failureThreshold: 2
 timeoutSeconds: 5
 periodSeconds: 60
 #@schema/type any=True
 defaultConfig:
+#@schema/type any=True
+configMaps:
+#@schema/type any=True
+ingressAnnotations:
+#@schema/type any=True
+ingressRules:
+#@schema/type any=True
+ingressHosts:

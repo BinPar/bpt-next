@@ -56,7 +56,7 @@ def defaultHostname():
   if isRelease():
   return data.values.productionDomain
   else:
-  return data.values.projectName+"-"+data.values.environment+".binpar.cloud"
+  return data.values.projectName+"-"+data.values.environment+"." + data.values.defaultRootDomain
   end
 end
 

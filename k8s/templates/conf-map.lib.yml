@@ -2,7 +2,7 @@
 #@ load("@ytt:template", "template")
 #@ load("utils.star", "utils")
 
-#@ def getConfigMap():
+#@ def getDefaultConfigMap():
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -12,5 +12,15 @@ data:
   PRIVATE_URL: #@ utils.serviceName()
   CLUSTER_URL: #@ utils.serviceName()+"."+utils.namespaceName()+".svc.cluster.local"
   #@ if/end data.values.defaultConfig:
-  config: #@ template.replace(data.values.defaultConfig)
+  _: #@ template.replace(data.values.defaultConfig)
+#@ end
+
+#@ def getValuesConfigMap():
+#@   configs = []
+#@   if data.values.configMaps:
+#@     for configMap in data.values.configMaps:
+#@       configs.append({"apiVersion": "v1", "kind": "ConfigMap", "metadata": {"name": configMap.name, "namespace": utils.namespaceName()}, "data": configMap.data})
+#@     end
+#@   end
+#@   return configs
 #@ end

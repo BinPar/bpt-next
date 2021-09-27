@@ -1,0 +1,36 @@
+#@data/values
+---
+projectName: bpt-next
+productionDomain: bpt-next.binpar.cloud
+environments: "test pre-release release"
+ingressAnnotations:
+  nginx.ingress.kubernetes.io/proxy-body-size: 256m
+ingressRules:
+  - host: test-rule.hostname.com
+    http:
+      paths:
+        - backend:
+            serviceName: service-1
+            servicePort: 80
+          path: /(ws.*)
+          pathType: ImplementationSpecific
+  - host: test-rule.hostname.com
+    http:
+      paths:
+        - backend:
+            serviceName: service-2
+            servicePort: 80
+          path: /(.*)
+          pathType: ImplementationSpecific
+ingressHosts:
+  - test-rule.hostname.com
+  - "*.hostname.com"
+configMaps:
+  - name: config-1
+    data:
+      PROP_1: 'asd'
+      PROP_2: 'bcv'
+  - name: config-2
+    data:
+      PROP_2_1: '2_asd'
+      PROP_2_2: '2_bcv'
