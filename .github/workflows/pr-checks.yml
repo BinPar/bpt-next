@@ -13,6 +13,8 @@ jobs:
         with:
           node-version: '16'
       - run: npm i
+      - name: NPM Audit
+        run: npm audit --audit-level=high
       - name: Lint
         run: npm run lint
       - name: Type check
