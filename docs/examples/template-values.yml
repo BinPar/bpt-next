@@ -2,7 +2,6 @@
 ---
 projectName: bpt-next
 productionDomain: bpt-next.binpar.cloud
-environments: "test pre-release release"
 ingressAnnotations:
   nginx.ingress.kubernetes.io/proxy-body-size: 256m
 ingressRules:

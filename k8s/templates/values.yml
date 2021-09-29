@@ -2,4 +2,3 @@
 ---
 projectName: bpt-next
 productionDomain: bpt-next.binpar.cloud
-environments: "test pre-release release"
