@@ -7,28 +7,51 @@ de dos formas:
   - Desde el repositorio del template (https://github.com/BinPar/bpt-next) pulsar en el botón "Use this template"
   - Desde la opción de crear nuevo repositorio donde pone "Repository template" seleccionar "BinPar/bpt-next"
 
-**Importante:** Crear el repositorio poniendo el Owner a "BinPar" y **siempre checkeamos la opción de "Include all branches"**
+**Importante:** Crear el repositorio poniendo el Owner a "BinPar".
+## Crear main
+
+En la pestaña de "Code" pinchamos en el botón de "develop" donde se seleccionan las branches.
+
+Escribimos main y pulsamos "Create branch: main from develop".
+
+## Crear un team para el proyecto
+
+Nos vamos a "Settings" y ahí a "Manage access".
+
+A la derecha buscamos "Create team".
+
+Creamos un nuevo team que se llame como el nombre del proyecto **sin ningún parent team y que sea visible**
+
+
 
 ## Proteger la rama main
 
-Nos vamos a "Settings" y ahí a "Branches".
+Dentro de "Settings" vamos a "Branches".
 
 Ahí veremos "Branch protection rules" y al lado un botón de "Add rule".
 
-En el interfaz que nos aparece dentro de "Branch name pattern" pondremos `main` y en
-"Protect matching branches" marcaremos "Require a pull request before merging" y dentro de esa
-marcaremos, además de la que viene por defecto, "Dismiss stale pull request approvals when new commits are pushed".
+En el interfaz que nos aparece dentro de "Branch name pattern" pondremos `main` y en "Protect matching branches" marcaremos "Require status checks to pass before merging" y dentro de esa buscaremos en el input "Code quality and unit testing".
 
-Por último marcamos "Include administrators".
+Como **medida adicional** en proyectos que requieran que las **pull request estén aprobadas** por una persona adicional distinta del que la creó marcaremos también "Require a pull request before merging" y dentro de esta también marcaremos "Dismiss stale pull request approvals when new commits are pushed".
+
+Si usamos la opción adicional la persona a cargo del proyecto debería tener el permiso de administrador del proyecto para poder hacer los merge que cree él mismo sin requerir la aprobación de otra parte.
 
 Y pulsamos en "Create".
 
+## Clonar proyecto
+
+En este punto nos clonamos ya el proyecto.
+
+Adicionalmente modificaremos el package.json para cambiar por lo menos el `name` y la propiedad `description`.
+
+Además, si tenemos `nvm` instalado podemos ejecutar `npm run useNodeLTS` para usar la versión del .nvmrc
+
 ## Configurar el proyecto
 
-Una vez hecho todo lo anterior lo único que nos falta es configurar los valores del proyecto. Para hacer esto en la ruta `k8s/templates/` hay un YAML que se llama `values.yml` que **es el único que vamos a modificar**. Dentro de la misma ruta tenemos el archivo `values-schema.yml` que contiene todos los campos configurables y los valores por defecto de los campos. No todos tienen valores por defecto y para sobreescribirlos lo haremos en el `values.yml`.
+Una vez hecho todo lo anterior lo único que nos falta es configurar los valores del proyecto. Para hacer esto en la ruta `k8s/templates/` hay un YAML que se llama `values.yml` que **es el único que vamos a modificar**. Dentro de la misma ruta tenemos el archivo `values-schema.yml` que contiene todos los campos configurables y los valores por defecto de los campos. No todos tienen valores por defecto y para sobrescribirlos lo haremos en el `values.yml`.
 
 ### values.yml
-En el archivo `docs/examples/template-values.yml` tenéis un ejemplo de una configuración más avanzada que sobreescribe los ingress y añade config maps adicionales.
+En el archivo `docs/examples/template-values.yml` tenéis un ejemplo de una configuración más avanzada que sobrescribe los ingress y añade config maps adicionales.
 
 A continuación vemos lo que es cada configuración:
 
@@ -54,11 +77,19 @@ A continuación vemos lo que es cada configuración:
  - releaseFactorCPULimit: Int - Por defecto `2`. Multiplicador que se aplica al valor base en los deploys de release
  - defaultConfig: YAML dict - Debe ser una serie de pares clave valor que se añadirán en el data del config map que se crea por defecto.
  - configMaps: YAML array - Aquí se puede especificar N config maps que se crearán adicionalmente. El formato de los miembros del array es un objeto que tiene una propiedad `name` que será el nombre del config map y una `data` que se corresponde con los datos que va a contener (se aplica directamente a la propiedad `data` del config map).
- - ingressAnnotations: YAML dict - Aquí se pueden especificar distintas annotations para el ingress. Estas anotaciones se añaden a las que hay por defecto a no ser que especifiquen la misma clave en cuyo caso se sobreescriben.
+ - ingressAnnotations: YAML dict - Aquí se pueden especificar distintas annotations para el ingress. Estas anotaciones se añaden a las que hay por defecto a no ser que especifiquen la misma clave en cuyo caso se sobrescriben.
  - ingressRules: YAML array - Aquí se puede especificar N reglas de ingress que sustituyen a las de por defecto. Adicionalmente si queremos utilizar el nombre del servicio que se crea automáticamente en el serviceName podemos ponerle el valor `"##DEFAULT_SERVICE_NAME"` (las comillas son necesarias para que lo tome como string).
  - ingressHosts: String array - Indicar aquí los hosts de los que se tiene que crear certificado SSL. Se meten en la propiedad `tls` del ingress.
 
-## BinFlow way (link a docu BinFlow extendida)
+## Healthcheck y tests
+
+Como parte del flujo que se describe más abajo es obligatorio tener un healthcheck y mínimo un test para que las pull requests sean válidas.
+
+En el directorio `docs/examples` tenéis un ejemplo de healthcheck muy sencillo y otro de un test básico.
+
+Los tests deben colocarse en una carpeta `tests` en el root del repositorio.
+
+## BinFlow way (link a documentación BinFlow extendida)
 La forma de proceder con este nuevo template y este nuevo sistema en general es seguir la filosofía del CI / CD de una forma fiel que no nos suponga un overhead en nuestro día a día. Pongo aquí unos highlights podéis verlo en profundidad en el link.
 
  - **Ya no usamos gitflow**.
@@ -73,6 +104,17 @@ La forma de proceder con este nuevo template y este nuevo sistema en general es 
  - Si queremos pasar una versión a `pre-release` o a `release` seleccionamos el tag que queremos y lo convertimos en `pre-release` o `release`.
 
 Eso sería, muy por encima, todo.
+
+## Cambiar a qué canal de Discord llegan las notificaciones
+
+Para cambiar el canal que usa para enviar notificaciones Discord tenemos que crear un Webhook en el canal de Discord que queremos que lleguen las notificaciones. Si no tenemos permisos suficientes le pediremos a Isa o Cristian que nos lo creen. Esto nos da como resultado una URL que utilizaremos en el siguiente paso.
+
+Después, en Github dentro del repositorio, vamos a "Settings" y a la pestaña de "Secrets".
+
+Aquí pulsaremos en "New repository secret".
+
+De nombre le pondremos el siguiente: `DISCORD_WEBHOOK`
+Y para el valor ponemos la URL del webhook de Discord del paso anterior.
 
 ## Mantener actualizado el template
 
