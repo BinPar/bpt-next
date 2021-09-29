@@ -32,6 +32,32 @@ En el archivo `docs/examples/template-values.yml` tenéis un ejemplo de una conf
 
 A continuación vemos lo que es cada configuración:
 
+ - projectName: **Required** String - Indica el nombre del proyecto y se usa en los templates de k8s
+ - namespace: String - El namespace de k8s en el que se despliegan los recursos (siempre se añade `-<environment>` al final automáticamente). Si se omite el namespace se infiere con el siguiente pattern `<projectName>-<environment>`.
+ - defaultRootDomain: String - Por defecto `binpar.cloud`. Es el dominio sobre el que se construyen los subdominios para los distintos entornos.
+ - productionDomain: String - El dominio que se utilizará para el entorno de `release`. Si se omite se infiere usando el defaultRootDomain.
+ - environment: **No rellenar, omitir siempre**. Los pipelines del CI / CD rellenan este parámetro
+ - healthcheckPath: String - Pro defecto `/healthcheck`. Es el endpoint donde k8s va a comprobar que la web está disponible periódicamente.
+ - initialDelaySeconds: Int - Por defecto `4`. Configura esta propiedad del deploy. Es el tiempo que se retrasa la primera comprobación del healthcheck.
+ - failureThreshold: Int - Por defecto `2`. Número de veces que puede fallar el healthcheck antes de marcarlo como no disponible.
+ - timeoutSeconds: Int - Por defecto `5`. Número de segundos antes de que la prueba del healthcheck falle.
+ - periodSeconds: Int - Por defecto `60`. Número de segundos entre pruebas de healthcheck.
+ - baseReplicas: Int - Por defecto `2`. Número base de replicas del deploy.
+ - releaseFactorReplicas: Int - Por defecto `2`. Multiplicador del número base de réplicas que se aplica a las versiones de release. Por ejemplo, con los valores por defecto el número de réplicas en release sería de `2 * 2 = 4`.
+ - baseRAMRequest: Int - Por defecto `64`. Cantidad de mebibytes (MiB) que va a reservar nuestro deploy en versiones no release.
+ - releaseFactorRAMRequest: Int - Por defecto `2`. Multiplicador de la cantidad base aplicado solo a los deploys de release.
+ - baseRAMLimit: Int - Por defecto `256`. Cantidad de mebibytes (MiB) que no puede sobrepasar nuestro deploy. Si sobrepasa este umbral el proceso recibe un kill y se reinicia el pod en cuestión.
+ - releaseFactorRAMLimit: Int - Por defecto `2`. Multiplicador de la cantidad base aplicado solo a los deploys de release.
+ - baseCPURequest: Int - Por defecto `50`. Corresponde al número de ms de CPU que reserva (1000 sería una CPU completa).
+ - releaseFactorCPURequest: Int - Por defecto `1`. Multiplicador que se aplica al valor base en los deploys de release
+ - baseCPULimit: Int - Por defecto `500`. Corresponde al número de ms de CPU máximos que puede usar un pod del deploy (1000 sería una CPU completa y, en teoría, puede ser mayor).
+ - releaseFactorCPULimit: Int - Por defecto `2`. Multiplicador que se aplica al valor base en los deploys de release
+ - defaultConfig: YAML dict - Debe ser una serie de pares clave valor que se añadirán en el data del config map que se crea por defecto.
+ - configMaps: YAML array - Aquí se puede especificar N config maps que se crearán adicionalmente. El formato de los miembros del array es un objeto que tiene una propiedad `name` que será el nombre del config map y una `data` que se corresponde con los datos que va a contener (se aplica directamente a la propiedad `data` del config map).
+ - ingressAnnotations: YAML dict - Aquí se pueden especificar distintas annotations para el ingress. Estas anotaciones se añaden a las que hay por defecto a no ser que especifiquen la misma clave en cuyo caso se sobreescriben.
+ - ingressRules: YAML array - Aquí se puede especificar N reglas de ingress que sustituyen a las de por defecto. Adicionalmente si queremos utilizar el nombre del servicio que se crea automáticamente en el serviceName podemos ponerle el valor `"##DEFAULT_SERVICE_NAME"` (las comillas son necesarias para que lo tome como string).
+ - ingressHosts: String array - Indicar aquí los hosts de los que se tiene que crear certificado SSL. Se meten en la propiedad `tls` del ingress.
+
 ## BinFlow way (link a docu BinFlow extendida)
 La forma de proceder con este nuevo template y este nuevo sistema en general es seguir la filosofía del CI / CD de una forma fiel que no nos suponga un overhead en nuestro día a día. Pongo aquí unos highlights podéis verlo en profundidad en el link.
 
