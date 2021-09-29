@@ -60,4 +60,18 @@ def defaultHostname():
   end
 end
 
-utils = struct.make(certificateName=certificateName, defaultConfigMapName=defaultConfigMapName, imageName=imageName, isRelease=isRelease, deployName=deployName, serviceName=serviceName, ingressName=ingressName, defaultLabels=defaultLabels, defaultHostname=defaultHostname, namespaceName=namespaceName)
+def replaceDefaultServiceNameInRules(rules):
+  rulesDict = struct.decode(rules)
+  for rule in rulesDict:
+    if rule.get('http') and rule["http"].get('paths'):
+      for path in rule["http"]["paths"]:
+        if path.get('backend') and path["backend"].get('serviceName') and path["backend"]["serviceName"].find("##DEFAULT_SERVICE_NAME") > -1:
+          path["backend"]["serviceName"] = serviceName()
+        end
+      end
+    end
+  end
+  return rulesDict
+end
+
+utils = struct.make(replaceDefaultServiceNameInRules=replaceDefaultServiceNameInRules, certificateName=certificateName, defaultConfigMapName=defaultConfigMapName, imageName=imageName, isRelease=isRelease, deployName=deployName, serviceName=serviceName, ingressName=ingressName, defaultLabels=defaultLabels, defaultHostname=defaultHostname, namespaceName=namespaceName)

@@ -17,7 +17,7 @@ metadata:
   namespace: #@ utils.namespaceName()
 spec:
   #@ if data.values.ingressRules:
-  rules: #@ data.values.ingressRules
+  rules: #@ utils.replaceDefaultServiceNameInRules(data.values.ingressRules)
   #@ else:
   rules:
     - host: #@ utils.defaultHostname()
