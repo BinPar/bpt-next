@@ -80,6 +80,7 @@ A continuación vemos lo que es cada configuración:
  - ingressAnnotations: YAML dict - Aquí se pueden especificar distintas annotations para el ingress. Estas anotaciones se añaden a las que hay por defecto a no ser que especifiquen la misma clave en cuyo caso se sobrescriben.
  - ingressRules: YAML array - Aquí se puede especificar N reglas de ingress que sustituyen a las de por defecto. Adicionalmente si queremos utilizar el nombre del servicio que se crea automáticamente en el serviceName podemos ponerle el valor `"##DEFAULT_SERVICE_NAME"` (las comillas son necesarias para que lo tome como string).
  - ingressHosts: String array - Indicar aquí los hosts de los que se tiene que crear certificado SSL. Se meten en la propiedad `tls` del ingress.
+ - additionalDeployEnvSources: YAML array - Aquí se pueden especificar N fuentes de variables de entorno tanto de tipo `configMapRef` como `secretRef`
 
 ## Healthcheck y tests
 

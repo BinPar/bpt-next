@@ -32,6 +32,11 @@ spec:
           envFrom:
             - configMapRef:
                 name: #@ utils.defaultConfigMapName()
+            #@ if data.values.additionalDeployEnvSources:
+            #@   for envSource in data.values.additionalDeployEnvSources:
+            - #@ envSource
+            #@   end
+            #@ end
           ports:
             - containerPort: 80
           readinessProbe:

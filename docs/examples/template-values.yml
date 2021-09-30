@@ -24,6 +24,16 @@ ingressRules:
 ingressHosts:
   - test-rule.hostname.com
   - "*.hostname.com"
+additionalDeployEnvSources:
+  - configMapRef:
+      name: config-1
+  - configMapRef:
+      name: config-2
+  - configMapRef:
+      name: config-2
+  - secretRef:
+      name: bi-productive-prod-back
+      optional: false
 configMaps:
   - name: config-1
     data:

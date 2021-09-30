@@ -31,3 +31,5 @@ ingressAnnotations:
 ingressRules:
 #@schema/type any=True
 ingressHosts:
+#@schema/type any=True
+additionalDeployEnvSources:
