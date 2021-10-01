@@ -27,6 +27,7 @@ jobs:
         run: npm i
       - name: Get next version
         run: |
+          echo "CUSTOM_ENVIRONMENT=test" >> $GITHUB_ENV
           NEXT_VERSION_WITHOUT_V=$(npm_config_yes=true npx standard-version --dry-run | head -n 1 | sed -n -e 's/.*bumping version in .* from .* to \(.*\).*/\1/p')
           echo "NEXT_VERSION_WITHOUT_V=$NEXT_VERSION_WITHOUT_V" >> $GITHUB_ENV
           echo "NEXT_VERSION=v$NEXT_VERSION_WITHOUT_V" >> $GITHUB_ENV
@@ -71,8 +72,16 @@ jobs:
             rancher
       - name: Login rancher
         run: rancher login --token ${{ secrets.RANCHER_TOKEN }} --context ${{ secrets.RANCHER_CONTEXT }} ${{ secrets.RANCHER_URL }}
+      - name: Create rancher project if not exists
+        run: ./.github/workflows/create-rancher-project-if-not-exists.sh "${{ steps.project-name-data.outputs.data }}"
+      - name: Switch rancher context to project
+        run: ./.github/workflows/rancher-switch-context-to-project.sh "${{ steps.project-name-data.outputs.data }}"
       - name: Check k8s resources and create if not exists
-        run: ./.github/workflows/create-k8s-if-not-exists.sh "test"
+        run: ./.github/workflows/create-k8s-if-not-exists.sh "${{ env.CUSTOM_ENVIRONMENT }}"
+      - name: Move namespace if not in project
+        run: |
+          K8S_NAMESPACE_NAME=$(./.github/workflows/get-namespace-name.js)
+          ./.github/workflows/rancher-move-namespace-if-not-in-project.sh "${K8S_NAMESPACE_NAME}" "${{ steps.project-name-data.outputs.data }}"
       - name: Exec standard-version and update repo
         run: |
           git config user.name github-actions
