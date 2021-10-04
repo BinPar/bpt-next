@@ -3,129 +3,96 @@ on:
   pull_request:
     types: [opened, edited, synchronize, reopened]
 jobs:
-  checkout_and_cache:
-    name: Check out and cache
+  setup_node_dependencies:
+    name: Setup Node and dependencies
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo and setup
         uses: actions/checkout@v2
-      - name: Cache checkout
-        uses: actions/cache@v2
-        with:
-          path: ./
-          key: checkout
       - uses: actions/setup-node@v2
         with:
           node-version: '16'
+      - name: Cache node_modules
+        uses: actions/cache@v2
+        id: cache-nm
+        with:
+          path: ./node_modules
+          key: node-modules-${{ hashFiles('package-lock.json') }}
       - name: Cache dependencies
+        if: steps.cache-nm.outputs.cache-hit != 'true'
         uses: actions/cache@v2
         with:
           path: ~/.npm
           key: npm-${{ hashFiles('package-lock.json') }}
           restore-keys: npm-
       - run: npm ci
+        if: steps.cache-nm.outputs.cache-hit != 'true'
   npm_audit:
     name: NPM Audit
-    needs: [checkout_and_cache]
+    needs: [setup_node_dependencies]
     runs-on: ubuntu-latest
     steps:
-      - name: Cache checkout
-        uses: actions/cache@v2
-        id: cache-checkout
-        with:
-          path: ./
-          key: checkout
-      - name: Check out the repo if not cached
-        if: steps.cache-checkout.outputs.cache-hit != 'true'
+      - name: Check out the repo and setup
         uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
           node-version: '16'
-      - name: Cache dependencies
+      - name: Cache node_modules
         uses: actions/cache@v2
         with:
-          path: ~/.npm
-          key: npm-${{ hashFiles('package-lock.json') }}
-          restore-keys: npm-
-      - run: npm ci
+          path: ./node_modules
+          key: node-modules-${{ hashFiles('package-lock.json') }}
       - name: NPM Audit
         run: npm audit --audit-level=high
   lint:
     name: Lint code
-    needs: [checkout_and_cache]
+    needs: [setup_node_dependencies]
     runs-on: ubuntu-latest
     steps:
-      - name: Cache checkout
-        uses: actions/cache@v2
-        id: cache-checkout
-        with:
-          path: ./
-          key: checkout
-      - name: Check out the repo if not cached
-        if: steps.cache-checkout.outputs.cache-hit != 'true'
+      - name: Check out the repo and setup
         uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
           node-version: '16'
-      - name: Cache dependencies
+      - name: Cache node_modules
         uses: actions/cache@v2
         with:
-          path: ~/.npm
-          key: npm-${{ hashFiles('package-lock.json') }}
-          restore-keys: npm-
-      - run: npm ci
+          path: ./node_modules
+          key: node-modules-${{ hashFiles('package-lock.json') }}
       - name: Lint
         run: npm run lint
   type_check:
     name: Type check
-    needs: [checkout_and_cache]
+    needs: [setup_node_dependencies]
     runs-on: ubuntu-latest
     steps:
-      - name: Cache checkout
-        uses: actions/cache@v2
-        id: cache-checkout
-        with:
-          path: ./
-          key: checkout
-      - name: Check out the repo if not cached
-        if: steps.cache-checkout.outputs.cache-hit != 'true'
+      - name: Check out the repo and setup
         uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
           node-version: '16'
-      - name: Cache dependencies
+      - name: Cache node_modules
         uses: actions/cache@v2
         with:
-          path: ~/.npm
-          key: npm-${{ hashFiles('package-lock.json') }}
-          restore-keys: npm-
-      - run: npm ci
+          path: ./node_modules
+          key: node-modules-${{ hashFiles('package-lock.json') }}
       - name: Type check
         run: npm run typeCheck
   run_tests:
     name: Run tests
-    needs: [checkout_and_cache]
+    needs: [setup_node_dependencies]
     runs-on: ubuntu-latest
     steps:
-      - name: Cache checkout
-        uses: actions/cache@v2
-        id: cache-checkout
-        with:
-          path: ./
-          key: checkout
-      - name: Check out the repo if not cached
-        if: steps.cache-checkout.outputs.cache-hit != 'true'
+      - name: Check out the repo and setup
         uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
           node-version: '16'
-      - name: Cache dependencies
+      - name: Cache node_modules
         uses: actions/cache@v2
         with:
-          path: ~/.npm
-          key: npm-${{ hashFiles('package-lock.json') }}
-          restore-keys: npm-
-      - run: npm ci
+          path: ./node_modules
+          key: node-modules-${{ hashFiles('package-lock.json') }}
       - name: Run tests
         run: npm test
   notify_discord:
