@@ -23,8 +23,14 @@ jobs:
         with:
           only: ytt
           ytt: '0.36.0'
+      - name: NPM cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-
       - name: NPM Install
-        run: npm i
+        run: npm ci
       - name: Get next version
         run: |
           echo "CUSTOM_ENVIRONMENT=test" >> $GITHUB_ENV
@@ -125,7 +131,7 @@ jobs:
         if: success()
         with:
           severity: info
-          details: "The `${{ env.NEXT_VERSION }}` for project `${{ steps.project-name-data.outputs.data }}` was successfully built and tagged.\nGenerated tag: ${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ env.NEXT_VERSION }}\n\nCHANGELOG.md and package.json were updated too.\n${{ steps.changelog.outputs.version-changelog }}"
+          details: "The `${{ env.NEXT_VERSION }}` for project `${{ steps.project-name-data.outputs.data }}` was successfully built and tagged.\nGenerated tag: ${{ github.server_url }}/${{ github.repository }}/releases/new?tag=${{ env.NEXT_VERSION }} \n\nCHANGELOG.md and package.json were updated too.\n${{ steps.changelog.outputs.version-changelog }}"
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
           avatarUrl: https://cdn.discordapp.com/avatars/839863605943205949/37ee1fdc2ea3909e3e1da4d109fbfa65.webp?size=256
       - name: Notify discord failed

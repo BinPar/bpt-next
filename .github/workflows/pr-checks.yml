@@ -3,11 +3,39 @@ on:
   pull_request:
     types: [opened, edited, synchronize, reopened]
 jobs:
+  checkout_and_cache:
+  name: NPM Audit
+  runs-on: ubuntu-latest
+  steps:
+    - name: Check out the repo and setup
+      uses: actions/checkout@v2
+    - name: Cache checkout
+      uses: actions/cache@v2
+      with:
+        path: ./
+        key: checkout
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+    - name: Cache dependencies
+      uses: actions/cache@v2
+      with:
+        path: ~/.npm
+        key: npm-${{ hashFiles('package-lock.json') }}
+        restore-keys: npm-
+    - run: npm ci
   npm_audit:
     name: NPM Audit
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the repo and setup
+      - name: Cache checkout
+        uses: actions/cache@v2
+        id: cache-checkout
+        with:
+          path: ./
+          key: checkout
+      - name: Check out the repo if not cached
+        if: steps.cache-checkout.outputs.cache-hit != 'true'
         uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
@@ -25,7 +53,14 @@ jobs:
     name: Lint code
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the repo and setup
+      - name: Cache checkout
+        uses: actions/cache@v2
+        id: cache-checkout
+        with:
+          path: ./
+          key: checkout
+      - name: Check out the repo if not cached
+        if: steps.cache-checkout.outputs.cache-hit != 'true'
         uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
@@ -43,7 +78,14 @@ jobs:
     name: Type check
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the repo and setup
+      - name: Cache checkout
+        uses: actions/cache@v2
+        id: cache-checkout
+        with:
+          path: ./
+          key: checkout
+      - name: Check out the repo if not cached
+        if: steps.cache-checkout.outputs.cache-hit != 'true'
         uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
@@ -61,7 +103,14 @@ jobs:
     name: Run tests
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the repo and setup
+      - name: Cache checkout
+        uses: actions/cache@v2
+        id: cache-checkout
+        with:
+          path: ./
+          key: checkout
+      - name: Check out the repo if not cached
+        if: steps.cache-checkout.outputs.cache-hit != 'true'
         uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
