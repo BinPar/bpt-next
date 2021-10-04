@@ -13,8 +13,12 @@ spec:
     email: soporte@binpar.com
     privateKeySecretRef:
       name: letsencrypt-prod
+    #@ if data.values.issuerSolvers:
+    solvers: #@ data.values.issuerSolvers
+    #@ else:
     solvers:
       - http01:
           ingress:
             class: nginx
+    #@ end
 #@ end

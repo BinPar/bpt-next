@@ -33,3 +33,5 @@ ingressRules:
 ingressHosts:
 #@schema/type any=True
 additionalDeployEnvSources:
+#@schema/type any=True
+issuerSolvers:

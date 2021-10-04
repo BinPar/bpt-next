@@ -81,6 +81,7 @@ A continuación vemos lo que es cada configuración:
  - ingressRules: YAML array - Aquí se puede especificar N reglas de ingress que sustituyen a las de por defecto. Adicionalmente si queremos utilizar el nombre del servicio que se crea automáticamente en el serviceName podemos ponerle el valor `"##DEFAULT_SERVICE_NAME"` (las comillas son necesarias para que lo tome como string).
  - ingressHosts: String array - Indicar aquí los hosts de los que se tiene que crear certificado SSL. Se meten en la propiedad `tls` del ingress.
  - additionalDeployEnvSources: YAML array - Aquí se pueden especificar N fuentes de variables de entorno tanto de tipo `configMapRef` como `secretRef`
+ - issuerSolvers: YAML array - Aquí se puede especificar N solvers del Issuer de cert-manager que sustituyen a la de por defecto.
 
 ## Healthcheck y tests
 
