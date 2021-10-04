@@ -4,7 +4,7 @@ on:
     types: [opened, edited, synchronize, reopened]
 jobs:
   checkout_and_cache:
-    name: NPM Audit
+    name: Check out and cache
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo and setup
@@ -26,6 +26,7 @@ jobs:
       - run: npm ci
   npm_audit:
     name: NPM Audit
+    needs: [checkout_and_cache]
     runs-on: ubuntu-latest
     steps:
       - name: Cache checkout
@@ -51,6 +52,7 @@ jobs:
         run: npm audit --audit-level=high
   lint:
     name: Lint code
+    needs: [checkout_and_cache]
     runs-on: ubuntu-latest
     steps:
       - name: Cache checkout
@@ -76,6 +78,7 @@ jobs:
         run: npm run lint
   type_check:
     name: Type check
+    needs: [checkout_and_cache]
     runs-on: ubuntu-latest
     steps:
       - name: Cache checkout
@@ -101,6 +104,7 @@ jobs:
         run: npm run typeCheck
   run_tests:
     name: Run tests
+    needs: [checkout_and_cache]
     runs-on: ubuntu-latest
     steps:
       - name: Cache checkout
