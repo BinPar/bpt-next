@@ -4,26 +4,26 @@ on:
     types: [opened, edited, synchronize, reopened]
 jobs:
   checkout_and_cache:
-  name: NPM Audit
-  runs-on: ubuntu-latest
-  steps:
-    - name: Check out the repo and setup
-      uses: actions/checkout@v2
-    - name: Cache checkout
-      uses: actions/cache@v2
-      with:
-        path: ./
-        key: checkout
-    - uses: actions/setup-node@v2
-      with:
-        node-version: '16'
-    - name: Cache dependencies
-      uses: actions/cache@v2
-      with:
-        path: ~/.npm
-        key: npm-${{ hashFiles('package-lock.json') }}
-        restore-keys: npm-
-    - run: npm ci
+    name: NPM Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo and setup
+        uses: actions/checkout@v2
+      - name: Cache checkout
+        uses: actions/cache@v2
+        with:
+          path: ./
+          key: checkout
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-
+      - run: npm ci
   npm_audit:
     name: NPM Audit
     runs-on: ubuntu-latest
