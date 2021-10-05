@@ -29,6 +29,10 @@ En este punto nos clonamos ya el proyecto.
 
 Adicionalmente modificaremos el package.json para cambiar por lo menos el `name` y la propiedad `description`.
 
+También le dedicaremos unos minutos al README.md.
+
+**IMPORTANTE**: Todos los archivos de código fuente (como componentes, lógica, hooks, etc) con la excepción de `pages` y `tests` tienen que estar **obligatoriamente** incluidos en la carpeta `src`.
+
 Además, si tenemos `nvm` instalado podemos ejecutar `npm run useNodeLTS` para usar la versión del .nvmrc
 
 Para el siguiente punto vamos a necesitar ejecutar una vez el pipeline de Code quality por lo que con estos cambios haremos commit y crearemos nuestra primera pull request.
