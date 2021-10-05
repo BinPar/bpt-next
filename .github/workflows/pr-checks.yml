@@ -27,6 +27,19 @@ jobs:
           restore-keys: npm-
       - run: npm ci
         if: steps.cache-nm.outputs.cache-hit != 'true'
+  you_shall_not_pass:
+    name: You shall not pass!
+    needs: [setup_node_dependencies]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo and setup
+        uses: actions/checkout@v2
+      - name: Check YSNP!
+        run: |
+          if [ -n "$(grep -Rl --include=\*.{ts,tsx,js,jsx} "// YSNP:" .)" ]; then
+              echo "::error::YOU SHALL NOT PASS!!"
+              exit 1
+          fi
   npm_audit:
     name: NPM Audit
     needs: [setup_node_dependencies]
@@ -98,7 +111,7 @@ jobs:
   notify_discord:
     name: Notify discord
     runs-on: ubuntu-latest
-    needs: [npm_audit, lint, type_check, run_tests]
+    needs: [you_shall_not_pass, npm_audit, lint, type_check, run_tests]
     continue-on-error: true
     steps:
       - name: Tests for PR success
