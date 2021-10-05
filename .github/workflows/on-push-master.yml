@@ -83,20 +83,44 @@ jobs:
           K8S_NAMESPACE_NAME=$(./.github/workflows/get-namespace-name.js)
           ./.github/workflows/rancher-move-namespace-if-not-in-project.sh "${K8S_NAMESPACE_NAME}" "${{ steps.project-name-data.outputs.data }}"
           echo "K8S_NAMESPACE_NAME=$K8S_NAMESPACE_NAME" >> $GITHUB_ENV
+      - run: npm i node-fetch@cjs --save=false
       - name: Get repository team ids
         uses: actions/github-script@v5
         id: repo-teams
         with:
           result-encoding: string
+          github-token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
           script: |
-            const teamsResponse = await github.repos.listTeams({
+            const fetch = require('node-fetch');
+            const response = await fetch(
+              'https://rancheremp.binpar.cloud/v3/projectRoleTemplateBindings?projectId=${{ steps.switch-context.outputs.projectId }}',
+              {
+                method: 'get',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ${{ secrets.RANCHER_TOKEN }}',
+                },
+              },
+            );
+            const { data: projectTeams } = await response.json();
+            const projectTeamIds =
+              projectTeams && projectTeams.length > 0
+                ? projectTeams.map((project) =>
+                    (project.groupPrincipalId || '').replace('github_team://', ''),
+                  )
+                : [];
+
+            const teamsResponse = await github.rest.repos.listTeams({
               owner: context.repo.owner,
               repo: context.repo.repo,
             });
             if (teamsResponse.status === 200) {
               const teams = teamsResponse.data;
               if (teams && teams.length > 0) {
-                return teams.map((team) => team.id).join(' ');
+                return teams
+                  .map((team) => team.id)
+                  .filter((id) => !projectTeamIds.includes(`${id}`))
+                  .join(' ');
               }
             }
             return '';
@@ -106,10 +130,10 @@ jobs:
           for team in "${{ steps.repo-teams.outputs.result }}"
           do
             curl 'https://rancheremp.binpar.cloud/v3/projectroletemplatebinding' \
-              -H 'Authorization: Bearer ${{ ${{ secrets.RANCHER_TOKEN }} }}' \
+              -H 'Authorization: Bearer ${{ secrets.RANCHER_TOKEN }}' \
               -H 'content-type: application/json' \
               -H 'accept: application/json' \
-              --data-raw "{\"type\":\"projectRoleTemplateBinding\",\"projectId\":\"${{ steps.switch-context.outputs.projectId }}\",\"groupPrincipalId\":\"github_team://$team\",\"roleTemplateId\":\"project-member\"}' \
+              --data-raw "{\"type\":\"projectRoleTemplateBinding\",\"projectId\":\"${{ steps.switch-context.outputs.projectId }}\",\"groupPrincipalId\":\"github_team://$team\",\"roleTemplateId\":\"project-member\"}" \
               --compressed
           done
       - name: Exec standard-version and update repo
