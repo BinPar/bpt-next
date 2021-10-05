@@ -23,21 +23,6 @@ A la derecha buscamos "Create team".
 Creamos un nuevo team que se llame como el nombre del proyecto **sin ningún parent team y que sea visible**
 
 
-
-## Proteger la rama main
-
-Dentro de "Settings" vamos a "Branches".
-
-Ahí veremos "Branch protection rules" y al lado un botón de "Add rule".
-
-En el interfaz que nos aparece dentro de "Branch name pattern" pondremos `main` y en "Protect matching branches" marcaremos "Require status checks to pass before merging" y dentro de esa buscaremos en el input "Code quality and unit testing".
-
-Como **medida adicional** en proyectos que requieran que las **pull request estén aprobadas** por una persona adicional distinta del que la creó marcaremos también "Require a pull request before merging" y dentro de esta también marcaremos "Dismiss stale pull request approvals when new commits are pushed".
-
-Si usamos la opción adicional la persona a cargo del proyecto debería tener el permiso de administrador del proyecto para poder hacer los merge que cree él mismo sin requerir la aprobación de otra parte.
-
-Y pulsamos en "Create".
-
 ## Clonar proyecto
 
 En este punto nos clonamos ya el proyecto.
@@ -45,6 +30,27 @@ En este punto nos clonamos ya el proyecto.
 Adicionalmente modificaremos el package.json para cambiar por lo menos el `name` y la propiedad `description`.
 
 Además, si tenemos `nvm` instalado podemos ejecutar `npm run useNodeLTS` para usar la versión del .nvmrc
+
+Para el siguiente punto vamos a necesitar ejecutar una vez el pipeline de Code quality por lo que con estos cambios haremos commit y crearemos nuestra primera pull request.
+
+## Proteger la rama main
+
+Dentro de "Settings" vamos a "Branches".
+
+Ahí veremos "Branch protection rules" y al lado un botón de "Add rule".
+
+En el interfaz que nos aparece dentro de "Branch name pattern" pondremos `main` y en "Protect matching branches" marcaremos "Require status checks to pass before merging" y dentro de esa buscaremos en el input los siguientes checks:
+ - NPM Audit
+ - Lint code
+ - Type check
+ - Run tests
+
+Como **medida adicional** en proyectos que requieran que las **pull request estén aprobadas** por una persona adicional distinta del que la creó marcaremos también "Require a pull request before merging" y dentro de esta también marcaremos "Dismiss stale pull request approvals when new commits are pushed".
+
+Si usamos la opción adicional la persona a cargo del proyecto debería tener el permiso de administrador del proyecto para poder hacer los merge que cree él mismo sin requerir la aprobación de otra parte.
+
+Y pulsamos en "Create".
+
 
 ## Configurar el proyecto
 
