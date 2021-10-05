@@ -42,7 +42,7 @@ jobs:
           severity: info
           details: 'About to build `${{ env.NEXT_VERSION }}` for project `${{ steps.project-name-data.outputs.data }}`'
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-          avatarUrl: https://cdn.discordapp.com/avatars/839863605943205949/37ee1fdc2ea3909e3e1da4d109fbfa65.webp?size=256
+          avatarUrl: ${{ secrets.DISCORD_AVATAR_URL }}
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -180,7 +180,7 @@ jobs:
           severity: info
           details: "The `${{ env.NEXT_VERSION }}` for project `${{ steps.project-name-data.outputs.data }}` was successfully built and tagged.\nCreate release: ${{ github.server_url }}/${{ github.repository }}/releases/new?tag=${{ env.NEXT_VERSION }} \n\nCHANGELOG.md and package.json were updated too.\n${{ steps.changelog.outputs.version-changelog }}"
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-          avatarUrl: https://cdn.discordapp.com/avatars/839863605943205949/37ee1fdc2ea3909e3e1da4d109fbfa65.webp?size=256
+          avatarUrl: ${{ secrets.DISCORD_AVATAR_URL }}
       - name: Notify discord failed
         uses: rjstone/discord-webhook-notify@v1
         if: failure()
@@ -188,7 +188,7 @@ jobs:
           severity: error
           details: 'Build tag and push `${{ env.NEXT_VERSION }}` for project `${{ steps.project-name-data.outputs.data }}` failed'
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-          avatarUrl: https://cdn.discordapp.com/avatars/839863605943205949/37ee1fdc2ea3909e3e1da4d109fbfa65.webp?size=256
+          avatarUrl: ${{ secrets.DISCORD_AVATAR_URL }}
       - name: Notify discord cancelled
         uses: rjstone/discord-webhook-notify@v1
         if: cancelled()
@@ -196,4 +196,4 @@ jobs:
           severity: warn
           details: 'Build tag and push `${{ env.NEXT_VERSION }}` for project `${{ steps.project-name-data.outputs.data }}` cancelled'
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-          avatarUrl: https://cdn.discordapp.com/avatars/839863605943205949/37ee1fdc2ea3909e3e1da4d109fbfa65.webp?size=256
+          avatarUrl: ${{ secrets.DISCORD_AVATAR_URL }}
