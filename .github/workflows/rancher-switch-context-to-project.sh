@@ -8,4 +8,5 @@ if [ -z "$projectId" ]; then
 else
     echo "Project found. Switching context to: '${projectId}'"
     rancher context switch "$projectId"
+    echo "::set-output name=projectId::$projectId"
 fi

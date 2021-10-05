@@ -74,6 +74,7 @@ jobs:
       - name: Create rancher project if not exists
         run: ./.github/workflows/create-rancher-project-if-not-exists.sh "${{ steps.project-name-data.outputs.data }}"
       - name: Switch rancher context to project
+        id: switch-context
         run: ./.github/workflows/rancher-switch-context-to-project.sh "${{ steps.project-name-data.outputs.data }}"
       - name: Check k8s resources and create if not exists
         run: ./.github/workflows/create-k8s-if-not-exists.sh "${{ env.CUSTOM_ENVIRONMENT }}"
@@ -82,6 +83,35 @@ jobs:
           K8S_NAMESPACE_NAME=$(./.github/workflows/get-namespace-name.js)
           ./.github/workflows/rancher-move-namespace-if-not-in-project.sh "${K8S_NAMESPACE_NAME}" "${{ steps.project-name-data.outputs.data }}"
           echo "K8S_NAMESPACE_NAME=$K8S_NAMESPACE_NAME" >> $GITHUB_ENV
+      - name: Get repository team ids
+        uses: actions/github-script@v5
+        id: repo-teams
+        with:
+          result-encoding: string
+          script: |
+            const teamsResponse = await github.repos.listTeams({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+            if (teamsResponse.status === 200) {
+              const teams = teamsResponse.data;
+              if (teams && teams.length > 0) {
+                return teams.map((team) => team.id).join(' ');
+              }
+            }
+            return '';
+      - name: Grant rancher member to teams
+        if: steps.repo-teams.outputs.result != ''
+        run: |
+          for team in "${{ steps.repo-teams.outputs.result }}"
+          do
+            curl 'https://rancheremp.binpar.cloud/v3/projectroletemplatebinding' \
+              -H 'Authorization: Bearer ${{ ${{ secrets.RANCHER_TOKEN }} }}' \
+              -H 'content-type: application/json' \
+              -H 'accept: application/json' \
+              --data-raw "{\"type\":\"projectRoleTemplateBinding\",\"projectId\":\"${{ steps.switch-context.outputs.projectId }}\",\"groupPrincipalId\":\"github_team://$team\",\"roleTemplateId\":\"project-member\"}' \
+              --compressed
+          done
       - name: Exec standard-version and update repo
         run: |
           git config user.name github-actions
