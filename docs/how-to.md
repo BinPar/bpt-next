@@ -40,6 +40,7 @@ Dentro de "Settings" vamos a "Branches".
 Ahí veremos "Branch protection rules" y al lado un botón de "Add rule".
 
 En el interfaz que nos aparece dentro de "Branch name pattern" pondremos `main` y en "Protect matching branches" marcaremos "Require status checks to pass before merging" y dentro de esa buscaremos en el input los siguientes checks:
+ - You shall not pass!
  - NPM Audit
  - Lint code
  - Type check
@@ -113,6 +114,12 @@ La forma de proceder con este nuevo template y este nuevo sistema en general es 
 
 Eso sería, muy por encima, todo.
 
+## You shall not pass!
+
+En ocasiones queremos añadir flags temporales para hacer debugging en local y podrían terminar en una build de release. Para evitar esto se ha incorporado el comentario especial `// YSNP: `.
+
+Este comentario hará que falle la ejecución de uno de los checks de la pull request marcando visualmente que deberíamos corregirlo antes de continuar.
+
 ## Cambiar a qué canal de Discord llegan las notificaciones
 
 Para cambiar el canal que usa para enviar notificaciones Discord tenemos que crear un Webhook en el canal de Discord que queremos que lleguen las notificaciones. Si no tenemos permisos suficientes le pediremos a Isa o Cristian que nos lo creen. Esto nos da como resultado una URL que utilizaremos en el siguiente paso.
@@ -123,6 +130,8 @@ Aquí pulsaremos en "New repository secret".
 
 De nombre le pondremos el siguiente: `DISCORD_WEBHOOK`
 Y para el valor ponemos la URL del webhook de Discord del paso anterior.
+
+También se puede añadir una imagen distinta creando otra secret que se llame `DISCORD_AVATAR_URL` y que contenga una URL que sirva una imagen.
 
 ## Mantener actualizado el template
 
