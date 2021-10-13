@@ -156,13 +156,7 @@ jobs:
       - name: Update develop changelog and package.json
         run: |
           cd develop
-          rm -rf CHANGELOG.md
-          cp ../CHANGELOG.md ./CHANGELOG.md
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          sed -i -e "s/\"version\": \"[^\"]*/\"version\": \"${NEXT_VERSION_WITHOUT_V}/" ./package.json
-          git add .
-          git commit -m "chore(version): update version $NEXT_VERSION and changelog"
+          git cherry-pick master
           git push
       - name: Tag docker image as test
         env:
