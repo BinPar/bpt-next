@@ -143,21 +143,15 @@ jobs:
           npm_config_yes=true npx standard-version
           git push
           git push --tags
+          git checkout develop
+          git pull origin develop
+          git cherry-pick --strategy-option theirs main
+          git push
       - name: Read CHANGELOG
         uses: BinPar/read-conventional-commit-changelog@v1
         id: changelog
         with:
           version: '${{ env.NEXT_VERSION }}'
-      - name: Check out develop
-        uses: actions/checkout@v2
-        with:
-          path: develop
-          ref: develop
-      - name: Update develop changelog and package.json
-        run: |
-          cd develop
-          git cherry-pick master
-          git push
       - name: Tag docker image as test
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
