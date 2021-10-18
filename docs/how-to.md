@@ -49,6 +49,7 @@ En el interfaz que nos aparece dentro de "Branch name pattern" pondremos `main` 
  - Lint code
  - Type check
  - Run tests
+ - Check k8s templates
 
 Como **medida adicional** en proyectos que requieran que las **pull request estén aprobadas** por una persona adicional distinta del que la creó marcaremos también "Require a pull request before merging" y dentro de esta también marcaremos "Dismiss stale pull request approvals when new commits are pushed".
 
