@@ -108,6 +108,19 @@ jobs:
           key: node-modules-${{ hashFiles('package-lock.json') }}
       - name: Run tests
         run: npm test
+  check_k8s_templates:
+    name: Check k8s templates
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo and setup
+        uses: actions/checkout@v2
+      - uses: vmware-tanzu/carvel-setup-action@v1
+        with:
+          only: ytt
+          ytt: '0.36.0'
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Compile k8s templates
+        run: ./.github/workflows/compile-k8s-templates.sh "test pre-release release"
   notify_discord:
     name: Notify discord
     runs-on: ubuntu-latest
