@@ -11,6 +11,8 @@ metadata:
     cert-manager.io/issuer: "letsencrypt-prod"
     nginx.ingress.kubernetes.io/rewrite-target: /$1
     nginx.ingress.kubernetes.io/ssl-passthrough: "false"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     #@ if/end data.values.ingressAnnotations:
     _: #@ template.replace(data.values.ingressAnnotations)
   name: #@ utils.ingressName()
