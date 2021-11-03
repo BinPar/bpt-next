@@ -124,13 +124,43 @@ jobs:
   notify_discord:
     name: Notify discord
     runs-on: ubuntu-latest
-    needs: [you_shall_not_pass, npm_audit, lint, type_check, run_tests]
+    if: always()
+    needs: [you_shall_not_pass, npm_audit, lint, type_check, run_tests, check_k8s_templates]
     continue-on-error: true
     steps:
-      - name: Tests for PR success
-        uses: rjstone/discord-webhook-notify@v1
+      - id: get-options
+        env:
+          STATUS_ARRAY: ${{ join(needs.*.result, ' ') }}
+        run: |
+          status='success'
+          for inputStatus in $STATUS_ARRAY
+          do
+            if [ "$inputStatus" == 'failure' ]
+            then
+              status="$inputStatus"
+              break
+            elif [ "$inputStatus" == 'cancelled' ]
+            then
+              status=$inputStatus
+            elif [ "$inputStatus" == 'skipped' ]
+            then
+              status='cancelled'
+            fi
+          done
+          echo "::set-output name=status::$status"
+          avatar="${{ secrets.DISCORD_AVATAR_URL }}"
+          if [ "$status" != 'success' ]
+          then
+            avatar="${{ secrets.DISCORD_AVATAR_URL_ERROR }}"
+          fi
+          echo "::set-output name=avatar::$avatar"
+      - name: Notify PR checks status
+        uses: sarisia/actions-status-discord@v1
         with:
-          severity: info
-          details: 'Tests for PR ${{ github.event.pull_request.url }} of ${{ github.event.repository.name }} successfully executed'
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-          avatarUrl: ${{ secrets.DISCORD_AVATAR_URL }}
+          status: ${{ steps.get-options.outputs.status }}
+          title: Pull Request Checks
+          description: |
+            Más info en el futuro...
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          avatar_url: ${{ steps.get-options.outputs.avatar }}
+          username: "BinFlow CI / CD"
