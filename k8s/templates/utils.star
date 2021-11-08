@@ -2,6 +2,9 @@ load("@ytt:data", "data")
 load("@ytt:struct", "struct")
 load("@ytt:assert", "assert")
 
+if not data.values.rancherProjectName.islower():
+  assert.fail("rancherProjectName should be a non-empty lowercased string")
+end
 if not data.values.projectName.islower():
   assert.fail("projectName should be a non-empty lowercased string")
 end

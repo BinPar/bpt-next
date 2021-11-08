@@ -67,6 +67,7 @@ En el archivo `docs/examples/template-values.yml` tenéis un ejemplo de una conf
 
 A continuación vemos lo que es cada configuración:
 
+- rancherProjectName: **Required** String - Indica el nombre del proyecto de Rancher en el que se crearán todos los recursos.
  - projectName: **Required** String - Indica el nombre del proyecto y se usa en los templates de k8s
  - namespace: String - El namespace de k8s en el que se despliegan los recursos (siempre se añade `-<environment>` al final automáticamente). Si se omite el namespace se infiere con el siguiente pattern `<projectName>-<environment>`.
  - defaultRootDomain: String - Por defecto `binpar.cloud`. Es el dominio sobre el que se construyen los subdominios para los distintos entornos.

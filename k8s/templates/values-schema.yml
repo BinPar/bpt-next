@@ -1,5 +1,6 @@
 #@data/values-schema
 ---
+rancherProjectName: ""
 projectName: ""
 #@schema/nullable
 namespace: ""

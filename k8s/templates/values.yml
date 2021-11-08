@@ -1,4 +1,5 @@
 #@data/values
 ---
-projectName: bpt-next
-productionDomain: bpt-next.binpar.cloud
+rancherProjectName: "bpt-next"
+projectName: bpt-next-web
+productionDomain: bpt-next-web.binpar.cloud
