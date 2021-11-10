@@ -1,7 +1,7 @@
 name: Tag image on published release
 on:
   release:
-    types: [published, released, prereleased]
+    types: [released, prereleased]
 jobs:
   tag_image:
     name: Tag image
