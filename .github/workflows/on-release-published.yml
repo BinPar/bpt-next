@@ -24,6 +24,12 @@ jobs:
         with:
           file: './k8s/templates/values.yml'
           key-path: '["projectName"]'
+      - name: Read rancher project name
+        uses: KJ002/read-yaml@1.5
+        id: rancher-project-name-data
+        with:
+          file: './k8s/templates/values.yml'
+          key-path: '["rancherProjectName"]'
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -43,7 +49,7 @@ jobs:
       - name: Login rancher
         run: rancher login --token ${{ secrets.RANCHER_TOKEN }} --context ${{ secrets.RANCHER_CONTEXT }} ${{ secrets.RANCHER_URL }}
       - name: Switch rancher context to project
-        run: ./.github/workflows/rancher-switch-context-to-project.sh "${{ steps.project-name-data.outputs.data }}"
+        run: ./.github/workflows/rancher-switch-context-to-project.sh "${{ steps.rancher-project-name-data.outputs.data }}"
       - name: Pull version docker image for tag
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -59,8 +65,8 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:pre-release
           ./.github/workflows/create-k8s-if-not-exists.sh "pre-release"
           K8S_NAMESPACE_NAME=$(./.github/workflows/get-namespace-name.js)
-          ./.github/workflows/rancher-move-namespace-if-not-in-project.sh "${K8S_NAMESPACE_NAME}" "${{ steps.project-name-data.outputs.data }}"
-          ./.github/workflows/rancher-redeploy.sh "${K8S_NAMESPACE_NAME}" "${{ steps.project-name-data.outputs.data }}" "pre-release"
+          ./.github/workflows/rancher-move-namespace-if-not-in-project.sh "${K8S_NAMESPACE_NAME}" "${{ steps.rancher-project-name-data.outputs.data }}"
+          ./.github/workflows/rancher-redeploy.sh "${K8S_NAMESPACE_NAME}" "${{ steps.rancher-project-name-data.outputs.data }}" "pre-release"
           echo "TAG_TYPE=pre-release" >> $GITHUB_ENV
       - name: Tag as release
         if: '!github.event.release.prerelease'
@@ -72,8 +78,8 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:release
           ./.github/workflows/create-k8s-if-not-exists.sh "release"
           K8S_NAMESPACE_NAME=$(./.github/workflows/get-namespace-name.js)
-          ./.github/workflows/rancher-move-namespace-if-not-in-project.sh "${K8S_NAMESPACE_NAME}" "${{ steps.project-name-data.outputs.data }}"
-          ./.github/workflows/rancher-redeploy.sh "${K8S_NAMESPACE_NAME}" "${{ steps.project-name-data.outputs.data }}" "release"
+          ./.github/workflows/rancher-move-namespace-if-not-in-project.sh "${K8S_NAMESPACE_NAME}" "${{ steps.rancher-project-name-data.outputs.data }}"
+          ./.github/workflows/rancher-redeploy.sh "${K8S_NAMESPACE_NAME}" "${{ steps.rancher-project-name-data.outputs.data }}" "release"
           echo "TAG_TYPE=release" >> $GITHUB_ENV
       - name: Tag image success
         uses: rjstone/discord-webhook-notify@v1
