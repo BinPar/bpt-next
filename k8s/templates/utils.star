@@ -77,4 +77,20 @@ def replaceDefaultServiceNameInRules(rules):
   return rulesDict
 end
 
-utils = struct.make(replaceDefaultServiceNameInRules=replaceDefaultServiceNameInRules, certificateName=certificateName, defaultConfigMapName=defaultConfigMapName, imageName=imageName, isRelease=isRelease, deployName=deployName, serviceName=serviceName, ingressName=ingressName, defaultLabels=defaultLabels, defaultHostname=defaultHostname, namespaceName=namespaceName)
+def recursiveLookupForStringAndReplace(obj, lookupString, newValue):
+  if (type(obj) == "string"):
+    return obj.replace(lookupString, newValue)
+  end
+  if (type(obj) == "struct"):
+    obj = struct.decode(obj)
+  end
+  if type(obj) == "list":
+    return [recursiveLookupForStringAndReplace(item, lookupString, newValue) for item in obj]
+  end
+  if type(obj) == "dict":
+    return { key: recursiveLookupForStringAndReplace(value, lookupString, newValue) for key, value in obj.items() }
+  end
+  return obj
+end
+
+utils = struct.make(recursiveLookupForStringAndReplace=recursiveLookupForStringAndReplace, replaceDefaultServiceNameInRules=replaceDefaultServiceNameInRules, certificateName=certificateName, defaultConfigMapName=defaultConfigMapName, imageName=imageName, isRelease=isRelease, deployName=deployName, serviceName=serviceName, ingressName=ingressName, defaultLabels=defaultLabels, defaultHostname=defaultHostname, namespaceName=namespaceName)

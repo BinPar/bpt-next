@@ -19,7 +19,7 @@ metadata:
   namespace: #@ utils.namespaceName()
 spec:
   #@ if data.values.ingressRules:
-  rules: #@ utils.replaceDefaultServiceNameInRules(data.values.ingressRules)
+  rules: #@ utils.recursiveLookupForStringAndReplace(data.values.ingressRules, "##DEFAULT_SERVICE_NAME", utils.serviceName())
   #@ else:
   rules:
     - host: #@ utils.defaultHostname()

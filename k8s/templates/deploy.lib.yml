@@ -34,13 +34,13 @@ spec:
                 name: #@ utils.defaultConfigMapName()
             #@ if data.values.additionalDeployEnvSources:
             #@   for envSource in data.values.additionalDeployEnvSources:
-            - #@ envSource
+            - #@ utils.recursiveLookupForStringAndReplace(envSource, "##ENVIRONMENT", data.values.environment)
             #@   end
             #@ end
           #@ if data.values.additionalDeployEnv:
           env:
             #@   for env in data.values.additionalDeployEnv:
-            - #@ env
+            - #@ utils.recursiveLookupForStringAndReplace(env, "##ENVIRONMENT", data.values.environment)
             #@   end
           #@ end
           ports:
