@@ -66,7 +66,7 @@ jobs:
           ./.github/workflows/create-k8s-if-not-exists.sh "pre-release"
           K8S_NAMESPACE_NAME=$(./.github/workflows/get-namespace-name.js)
           ./.github/workflows/rancher-move-namespace-if-not-in-project.sh "${K8S_NAMESPACE_NAME}" "${{ steps.rancher-project-name-data.outputs.data }}"
-          ./.github/workflows/rancher-redeploy.sh "${K8S_NAMESPACE_NAME}" "${{ steps.rancher-project-name-data.outputs.data }}" "pre-release"
+          ./.github/workflows/rancher-redeploy.sh "${K8S_NAMESPACE_NAME}" "${{ steps.project-name-data.outputs.data }}" "pre-release"
           echo "TAG_TYPE=pre-release" >> $GITHUB_ENV
       - name: Tag as release
         if: '!github.event.release.prerelease'
@@ -79,7 +79,7 @@ jobs:
           ./.github/workflows/create-k8s-if-not-exists.sh "release"
           K8S_NAMESPACE_NAME=$(./.github/workflows/get-namespace-name.js)
           ./.github/workflows/rancher-move-namespace-if-not-in-project.sh "${K8S_NAMESPACE_NAME}" "${{ steps.rancher-project-name-data.outputs.data }}"
-          ./.github/workflows/rancher-redeploy.sh "${K8S_NAMESPACE_NAME}" "${{ steps.rancher-project-name-data.outputs.data }}" "release"
+          ./.github/workflows/rancher-redeploy.sh "${K8S_NAMESPACE_NAME}" "${{ steps.project-name-data.outputs.data }}" "release"
           echo "TAG_TYPE=release" >> $GITHUB_ENV
       - name: Tag image success
         uses: rjstone/discord-webhook-notify@v1
