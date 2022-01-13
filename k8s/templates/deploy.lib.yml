@@ -44,11 +44,12 @@ spec:
             #@   end
           #@ end
           ports:
-            - containerPort: 80
+            - containerPort: 8080
+              name: main-http
           readinessProbe:
             httpGet:
               path: #@ data.values.healthcheckPath
-              port: 80
+              port: 8080
               scheme: HTTP
             initialDelaySeconds: #@ data.values.initialDelaySeconds
             failureThreshold: #@ data.values.failureThreshold

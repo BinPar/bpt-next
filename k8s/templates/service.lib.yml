@@ -12,7 +12,7 @@ spec:
   ports:
     - port: 80
       protocol: TCP
-      targetPort: 80
+      targetPort: main-http
   selector: #@ utils.defaultLabels("pod")
   sessionAffinity: None
   type: ClusterIP
