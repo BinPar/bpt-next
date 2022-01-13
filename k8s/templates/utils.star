@@ -8,9 +8,6 @@ end
 if not data.values.projectName.islower():
   assert.fail("projectName should be a non-empty lowercased string")
 end
-if not data.values.productionDomain.islower():
-  assert.fail("productionDomain should be a non-empty lowercased string")
-end
 if not (data.values.environment == "test" or data.values.environment == "pre-release" or data.values.environment == "release"):
   assert.fail("environment should be 'test', 'pre-release' or 'release'")
 end
@@ -57,9 +54,13 @@ end
 
 def defaultHostname():
   if isRelease():
-  return data.values.productionDomain
+    if data.values.productionDomain:
+      return data.values.productionDomain
+    else:
+      return data.values.projectName+"." + data.values.defaultRootDomain
+    end
   else:
-  return data.values.projectName+"-"+data.values.environment+"." + data.values.defaultRootDomain
+    return data.values.projectName+"-"+data.values.environment+"." + data.values.defaultRootDomain
   end
 end
 
