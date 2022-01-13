@@ -60,6 +60,11 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
+      - name: Exec standard-version
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          npm_config_yes=true npx standard-version
       - name: Build image and push
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -142,22 +147,6 @@ jobs:
               --data-raw "{\"type\":\"projectRoleTemplateBinding\",\"projectId\":\"${{ steps.switch-context.outputs.projectId }}\",\"groupPrincipalId\":\"github_team://$team\",\"roleTemplateId\":\"project-member\"}" \
               --compressed
           done
-      - name: Exec standard-version and update repo
-        run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          npm_config_yes=true npx standard-version
-          git push
-          git push --tags
-          git checkout develop
-          git pull origin develop
-          git cherry-pick --strategy-option theirs main
-          git push
-      - name: Read CHANGELOG
-        uses: BinPar/read-conventional-commit-changelog@v1
-        id: changelog
-        with:
-          version: '${{ env.NEXT_VERSION }}'
       - name: Tag docker image as test
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -167,6 +156,19 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.CUSTOM_ENVIRONMENT }}
       - name: Redeploy to apply new image
         run: ./.github/workflows/rancher-redeploy.sh "${{ env.K8S_NAMESPACE_NAME }}" "${{ steps.project-name-data.outputs.data }}" "${{ env.CUSTOM_ENVIRONMENT }}"
+      - name: Update repo
+        run: |
+          git push
+          git push --tags
+          git checkout develop
+          git pull origin develop
+          git merge --strategy-option theirs main
+          git push
+      - name: Read CHANGELOG
+        uses: BinPar/read-conventional-commit-changelog@v1
+        id: changelog
+        with:
+          version: '${{ env.NEXT_VERSION }}'
       - name: Notify discord success
         uses: rjstone/discord-webhook-notify@v1
         if: success()
