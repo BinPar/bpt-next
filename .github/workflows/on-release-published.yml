@@ -82,26 +82,36 @@ jobs:
           ./.github/workflows/rancher-redeploy.sh "${K8S_NAMESPACE_NAME}" "${{ steps.project-name-data.outputs.data }}" "release"
           echo "TAG_TYPE=release" >> $GITHUB_ENV
       - name: Tag image success
-        uses: rjstone/discord-webhook-notify@v1
+        uses: sarisia/actions-status-discord@v1
         if: success()
         with:
-          severity: info
-          details: 'The `${{ env.NEXT_VERSION }}` for project `${{ steps.project-name-data.outputs.data }}` was successfully tagged as **${{ env.TAG_TYPE }}**'
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-          avatarUrl: ${{ secrets.DISCORD_AVATAR_URL }}
+          title: Tag and deployed to `${{ env.TAG_TYPE }}` environment
+          description: |
+            Version: `${{ env.NEXT_VERSION }}`
+            Project: `${{ steps.project-name-data.outputs.data }}`
+            Successfully tagged as **${{ env.TAG_TYPE }}** and redeployed.
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          avatar_url: ${{ secrets.DISCORD_AVATAR_URL }}
+          username: "BinFlow CI / CD"
       - name: Tag image failed
-        uses: rjstone/discord-webhook-notify@v1
+        uses: sarisia/actions-status-discord@v1
         if: failure()
         with:
-          severity: error
-          details: 'Tag image `${{ env.NEXT_VERSION }}` for project `${{ steps.project-name-data.outputs.data }}` failed'
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-          avatarUrl: ${{ secrets.DISCORD_AVATAR_URL }}
+          title: Tag and deployed to `${{ env.TAG_TYPE }}` environment
+          description: |
+            Version: `${{ env.NEXT_VERSION }}`
+            Project: `${{ steps.project-name-data.outputs.data }}`
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          avatar_url: ${{ secrets.DISCORD_AVATAR_URL_ERROR }}
+          username: "BinFlow CI / CD"
       - name: Tag image cancelled
-        uses: rjstone/discord-webhook-notify@v1
+        uses: sarisia/actions-status-discord@v1
         if: cancelled()
         with:
-          severity: warn
-          details: 'Tag image `${{ env.NEXT_VERSION }}` for project `${{ steps.project-name-data.outputs.data }}` cancelled'
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-          avatarUrl: ${{ secrets.DISCORD_AVATAR_URL }}
+          title: Tag and deployed to `${{ env.TAG_TYPE }}` environment
+          description: |
+            Version: `${{ env.NEXT_VERSION }}`
+            Project: `${{ steps.project-name-data.outputs.data }}`
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          avatar_url: ${{ secrets.DISCORD_AVATAR_URL_ERROR }}
+          username: "BinFlow CI / CD"

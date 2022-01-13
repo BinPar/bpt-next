@@ -43,12 +43,17 @@ jobs:
           file: './k8s/templates/values.yml'
           key-path: '["rancherProjectName"]'
       - name: Info new version
-        uses: rjstone/discord-webhook-notify@v1
+        uses: sarisia/actions-status-discord@v1
         with:
-          severity: info
-          details: 'About to build `${{ env.NEXT_VERSION }}` for project `${{ steps.project-name-data.outputs.data }}`'
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-          avatarUrl: ${{ secrets.DISCORD_AVATAR_URL }}
+          color: 0x334df5
+          noprefix: true
+          title: Building new version
+          description: |
+            Version `${{ env.NEXT_VERSION }}`
+            Project `${{ steps.project-name-data.outputs.data }}`
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          avatar_url: ${{ secrets.DISCORD_AVATAR_URL }}
+          username: 'BinFlow CI / CD'
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -170,26 +175,36 @@ jobs:
         with:
           version: '${{ env.NEXT_VERSION }}'
       - name: Notify discord success
-        uses: rjstone/discord-webhook-notify@v1
+        uses: sarisia/actions-status-discord@v1
         if: success()
         with:
-          severity: info
-          details: "The `${{ env.NEXT_VERSION }}` for project `${{ steps.project-name-data.outputs.data }}` was successfully built and tagged.\nCreate release: ${{ github.server_url }}/${{ github.repository }}/releases/new?tag=${{ env.NEXT_VERSION }} \n\nCHANGELOG.md and package.json were updated too.\n${{ steps.changelog.outputs.version-changelog }}"
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-          avatarUrl: ${{ secrets.DISCORD_AVATAR_URL }}
+          title: Build and tagged new version to `test`
+          description: |
+            The `${{ env.NEXT_VERSION }}` for project `${{ steps.project-name-data.outputs.data }}` was successfully built and tagged
+            Create release: ${{ github.server_url }}/${{ github.repository }}/releases/new?tag=${{ env.NEXT_VERSION }}
+
+            CHANGELOG.md and package.json were updated too.
+            ${{ steps.changelog.outputs.version-changelog }}
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          avatar_url: ${{ secrets.DISCORD_AVATAR_URL }}
+          username: 'BinFlow CI / CD'
       - name: Notify discord failed
-        uses: rjstone/discord-webhook-notify@v1
+        uses: sarisia/actions-status-discord@v1
         if: failure()
         with:
-          severity: error
-          details: 'Build tag and push `${{ env.NEXT_VERSION }}` for project `${{ steps.project-name-data.outputs.data }}` failed'
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-          avatarUrl: ${{ secrets.DISCORD_AVATAR_URL }}
+          title: Build and tagged new version to `test` failed
+          description: |
+            The `${{ env.NEXT_VERSION }}` for project `${{ steps.project-name-data.outputs.data }}` failed
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          avatar_url: ${{ secrets.DISCORD_AVATAR_URL_ERROR }}
+          username: 'BinFlow CI / CD'
       - name: Notify discord cancelled
-        uses: rjstone/discord-webhook-notify@v1
+        uses: sarisia/actions-status-discord@v1
         if: cancelled()
         with:
-          severity: warn
-          details: 'Build tag and push `${{ env.NEXT_VERSION }}` for project `${{ steps.project-name-data.outputs.data }}` cancelled'
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-          avatarUrl: ${{ secrets.DISCORD_AVATAR_URL }}
+          title: Build and tagged new version to `test` cancelled
+          description: |
+            The `${{ env.NEXT_VERSION }}` for project `${{ steps.project-name-data.outputs.data }}` cancelled
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          avatar_url: ${{ secrets.DISCORD_AVATAR_URL_ERROR }}
+          username: 'BinFlow CI / CD'
