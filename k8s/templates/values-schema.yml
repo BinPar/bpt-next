@@ -13,15 +13,15 @@ failureThreshold: 2
 timeoutSeconds: 5
 periodSeconds: 60
 baseReplicas: 2
-releaseFactorReplicas: 2
+releaseFactorReplicas: 2.0
 baseRAMRequest: 64
-releaseFactorRAMRequest: 2
-baseRAMLimit: 256
-releaseFactorRAMLimit: 2
-baseCPURequest: 50
-releaseFactorCPURequest: 1
-baseCPULimit: 500
-releaseFactorCPULimit: 2
+releaseFactorRAMRequest: 2.0
+baseRAMLimit: 128
+releaseFactorRAMLimit: 2.0
+baseCPURequest: 30
+releaseFactorCPURequest: 1.0
+baseCPULimit: 80
+releaseFactorCPULimit: 2.0
 #@schema/type any=True
 defaultConfig:
 #@schema/type any=True
