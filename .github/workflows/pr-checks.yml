@@ -120,7 +120,9 @@ jobs:
           ytt: '0.36.0'
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Compile k8s templates
-        run: ./k8s/templates/compile-templates.sh "test pre-release release"
+        run: |
+          cd ./k8s/templates
+          ./compile-templates.sh "test pre-release release"
   notify_discord:
     name: Notify discord
     runs-on: ubuntu-latest
