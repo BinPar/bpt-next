@@ -27,7 +27,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "next": "^11",
+    "next": "^12",
     "react": "^17",
     "react-dom": "^17"
   },
