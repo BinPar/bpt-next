@@ -36,12 +36,6 @@ jobs:
         with:
           file: './k8s/templates/values.yml'
           key-path: '["projectName"]'
-      - name: Read rancher project name
-        uses: KJ002/read-yaml@1.5
-        id: rancher-project-name-data
-        with:
-          file: './k8s/templates/values.yml'
-          key-path: '["rancherProjectName"]'
       - name: Info new version
         uses: sarisia/actions-status-discord@v1
         with:
@@ -85,6 +79,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
+          platforms: ${{ secrets.BUILD_PLATFORMS }}
           push: true
           tags: |
             ${{ steps.login-ecr.outputs.registry }}/${{ steps.project-name-data.outputs.data }}:latest
@@ -96,27 +91,19 @@ jobs:
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
       - name: Setup Kubernetes Tools
-        uses: yokawasa/action-setup-kube-tools@v0.8.0
+        uses: azure/setup-kubectl@v2.0
         id: kubernetes-tools
         with:
-          setup-tools: |
-            kubectl
-            rancher
-      - name: Login rancher
-        run: rancher login --token ${{ secrets.RANCHER_TOKEN }} --context ${{ secrets.RANCHER_CONTEXT }} ${{ secrets.RANCHER_URL }}
-      - name: Create rancher project if not exists
-        run: ./.github/workflows/create-rancher-project-if-not-exists.sh "${{ steps.rancher-project-name-data.outputs.data }}"
-      - name: Switch rancher context to project
-        id: switch-context
-        run: ./.github/workflows/rancher-switch-context-to-project.sh "${{ steps.rancher-project-name-data.outputs.data }}"
+          version: latest
+      # - run: ln -sf ${{ steps.kubernetes-tools.outputs.kubectl-path }} /usr/bin/kubectl
+      - name: Login kubectl with EKS
+        run: aws eks update-kubeconfig --name ${{ secrets.TEST_K8S_CLUSTER_NAME }} --role-arn ${{ secrets.AWS_EKS_ROLE }}
       - name: Check k8s resources and create if not exists
         run: ./.github/workflows/create-k8s-if-not-exists.sh "${{ env.CUSTOM_ENVIRONMENT }}"
-      - name: Move namespace if not in project
+      - name: Get namespace
         run: |
           K8S_NAMESPACE_NAME=$(./.github/workflows/get-namespace-name.js)
-          ./.github/workflows/rancher-move-namespace-if-not-in-project.sh "${K8S_NAMESPACE_NAME}" "${{ steps.rancher-project-name-data.outputs.data }}"
           echo "K8S_NAMESPACE_NAME=$K8S_NAMESPACE_NAME" >> $GITHUB_ENV
-      - run: npm i node-fetch@cjs --save=false
       - name: Get repository team ids
         uses: actions/github-script@v5
         id: repo-teams
@@ -124,25 +111,6 @@ jobs:
           result-encoding: string
           github-token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
           script: |
-            const fetch = require('node-fetch');
-            const response = await fetch(
-              'https://rancheremp.binpar.cloud/v3/projectRoleTemplateBindings?projectId=${{ steps.switch-context.outputs.projectId }}',
-              {
-                method: 'get',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': 'Bearer ${{ secrets.RANCHER_TOKEN }}',
-                },
-              },
-            );
-            const { data: projectTeams } = await response.json();
-            const projectTeamIds =
-              projectTeams && projectTeams.length > 0
-                ? projectTeams.map((project) =>
-                    (project.groupPrincipalId || '').replace('github_team://', ''),
-                  )
-                : [];
-
             const teamsResponse = await github.rest.repos.listTeams({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -151,8 +119,7 @@ jobs:
               const teams = teamsResponse.data;
               if (teams && teams.length > 0) {
                 return teams
-                  .map((team) => team.id)
-                  .filter((id) => !projectTeamIds.includes(`${id}`))
+                  .map((team) => team.slug)
                   .join(' ');
               }
             }
@@ -162,12 +129,8 @@ jobs:
         run: |
           for team in "${{ steps.repo-teams.outputs.result }}"
           do
-            curl 'https://rancheremp.binpar.cloud/v3/projectroletemplatebinding' \
-              -H 'Authorization: Bearer ${{ secrets.RANCHER_TOKEN }}' \
-              -H 'content-type: application/json' \
-              -H 'accept: application/json' \
-              --data-raw "{\"type\":\"projectRoleTemplateBinding\",\"projectId\":\"${{ steps.switch-context.outputs.projectId }}\",\"groupPrincipalId\":\"github_team://$team\",\"roleTemplateId\":\"project-member\"}" \
-              --compressed
+            kubectl create rolebinding ${team}-read-all --group="${{ github.repository_owner }}:$team" --clusterrole=cluster-read-all -n "${{ env.K8S_NAMESPACE_NAME }}" --save-config --dry-run=client -o yaml | kubectl apply -f -
+            kubectl create clusterrolebinding ${team}-read-ns --group="${{ github.repository_owner }}:$team" --clusterrole=cluster-read-namespaces --save-config --dry-run=client -o yaml | kubectl apply -f -
           done
       - name: Tag docker image as test
         uses: akhilerm/tag-push-action@v2.0.0
@@ -176,7 +139,7 @@ jobs:
           dst: |
             ${{ steps.login-ecr.outputs.registry }}/${{ steps.project-name-data.outputs.data }}:${{ env.CUSTOM_ENVIRONMENT }}
       - name: Redeploy to apply new image
-        run: ./.github/workflows/rancher-redeploy.sh "${{ env.K8S_NAMESPACE_NAME }}" "${{ steps.project-name-data.outputs.data }}" "${{ env.CUSTOM_ENVIRONMENT }}"
+        run: ./.github/workflows/redeploy.sh "${{ env.K8S_NAMESPACE_NAME }}" "${{ steps.project-name-data.outputs.data }}" "${{ env.CUSTOM_ENVIRONMENT }}"
       - name: Update repo
         run: |
           git push
