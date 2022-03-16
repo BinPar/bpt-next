@@ -4,7 +4,7 @@ rancherProjectName: ""
 projectName: ""
 #@schema/nullable
 namespace: ""
-defaultRootDomain: "binpar.cloud"
+defaultRootDomain: "binpar.online"
 productionDomain: ""
 environment: ""
 healthcheckPath: "/healthcheck"

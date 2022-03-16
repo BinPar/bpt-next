@@ -10,7 +10,7 @@ on:
 jobs:
   build_version_tag:
     name: Build, version and tag
-    runs-on: ${{ contains(secrets.BUILD_PLATFORMS, 'arm') && [self-hosted, ARM64] || ubuntu-latest }}
+    runs-on: [self-hosted, ARM64]
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
@@ -20,11 +20,6 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '16'
-      - uses: vmware-tanzu/carvel-setup-action@v1
-        if: contains(secrets.BUILD_PLATFORMS, 'amd')
-        with:
-          only: ytt
-          ytt: '0.36.0'
       - name: Get next version
         run: |
           echo "CUSTOM_ENVIRONMENT=test" >> $GITHUB_ENV
@@ -57,10 +52,6 @@ jobs:
           aws-region: eu-west-1
       - name: Create ECR repository if not exists
         run: ./.github/workflows/create-ecr-repository-if-not-exists.sh ${{ steps.project-name-data.outputs.data }}
-      # - uses: docker/setup-buildx-action@v1
-      #   id: buildx
-      - run: docker buildx create --use
-        if: contains(secrets.BUILD_PLATFORMS, 'amd')
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
@@ -125,7 +116,7 @@ jobs:
               }
             }
             return '';
-      - name: Grant rancher member to teams
+      - name: Grant read permissions to Github teams
         if: steps.repo-teams.outputs.result != ''
         run: |
           for team in "${{ steps.repo-teams.outputs.result }}"
@@ -134,7 +125,6 @@ jobs:
             kubectl create clusterrolebinding ${team}-read-ns --group="${{ github.repository_owner }}:$team" --clusterrole=cluster-read-namespaces --save-config --dry-run=client -o yaml | kubectl apply -f -
           done
       - name: Push as test
-        if: contains(secrets.BUILD_PLATFORMS, 'arm')
         uses: docker/build-push-action@v2
         with:
           context: .
@@ -143,13 +133,6 @@ jobs:
           tags: |
             ${{ steps.login-ecr.outputs.registry }}/${{ steps.project-name-data.outputs.data }}:test
           cache-from: type=local,src=/tmp/.buildx-cache
-      - name: Tag docker image as test
-        if: contains(secrets.BUILD_PLATFORMS, 'amd')
-        uses: akhilerm/tag-push-action@v2.0.0
-        with:
-          src: ${{ steps.login-ecr.outputs.registry }}/${{ steps.project-name-data.outputs.data }}:${{ env.NEXT_VERSION }}
-          dst: |
-            ${{ steps.login-ecr.outputs.registry }}/${{ steps.project-name-data.outputs.data }}:${{ env.CUSTOM_ENVIRONMENT }}
       - name: Redeploy to apply new image
         run: ./.github/workflows/redeploy.sh "${{ env.K8S_NAMESPACE_NAME }}" "${{ steps.project-name-data.outputs.data }}" "${{ env.CUSTOM_ENVIRONMENT }}"
       - name: Update repo
