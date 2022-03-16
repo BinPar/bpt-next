@@ -171,6 +171,7 @@ jobs:
         with:
           title: Build and tagged new version to `test`
           description: |
+            Arch: `${{ secrets.BUILD_PLATFORMS }}`
             The `${{ env.NEXT_VERSION }}` for project `${{ steps.project-name-data.outputs.data }}` was successfully built and tagged
             Create release: ${{ github.server_url }}/${{ github.repository }}/releases/new?tag=${{ env.NEXT_VERSION }}
 
