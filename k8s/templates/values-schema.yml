@@ -1,13 +1,12 @@
 #@data/values-schema
 ---
-rancherProjectName: ""
-projectName: ""
+projectName: ''
 #@schema/nullable
-namespace: ""
-defaultRootDomain: "binpar.online"
-productionDomain: ""
-environment: ""
-healthcheckPath: "/healthcheck"
+namespace: ''
+defaultRootDomain: 'binpar.online'
+productionDomain: ''
+environment: ''
+healthcheckPath: '/healthcheck'
 initialDelaySeconds: 4
 failureThreshold: 2
 timeoutSeconds: 5
@@ -38,3 +37,26 @@ additionalDeployEnvSources:
 additionalDeployEnv:
 #@schema/type any=True
 issuerSolvers:
+#@schema/type any=True
+volumes:
+#!  - name: ''
+#!    persistentVolumeClaim:
+#!      claimName: ''
+#!    mountPath: ''
+#@schema/type any=True
+volumeClaims:
+#!  - name: ''
+#!    storageClassName: gp2
+#!    accessModes:
+#!      - ReadWriteOnce
+#!    resources:
+#!      requests:
+#!        storage: ''
+#@schema/type any=True
+volumeStorages:
+#!  - name: ''
+#!    storageClassName: gp2
+#!    capacity:
+#!      storage: ''
+#!    accessModes:
+#!      - ReadWriteOnce

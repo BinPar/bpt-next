@@ -3,10 +3,17 @@
 #@ load("service.lib.yml", "getService")
 #@ load("ingress.lib.yml", "getIngress")
 #@ load("issuer.lib.yml", "getIssuer")
+#@ load("volumes.lib.yml", "getVolumeStorages", "getVolumeClaims")
 #@ load("conf-map.lib.yml", "getDefaultConfigMap", "getValuesConfigMap")
 
 --- #@ getNamespace()
 --- #@ getIssuer()
+#@ volumeStorages = getVolumeStorages()
+#@ for/end volumeStorage in volumeStorages:
+--- #@ volumeStorage
+#@ volumeClaims = getVolumeClaims()
+#@ for/end volumeClaim in volumeClaims:
+--- #@ volumeClaim
 --- #@ getDeploy()
 --- #@ getService()
 --- #@ getIngress()

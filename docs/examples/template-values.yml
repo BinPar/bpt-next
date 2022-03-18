@@ -57,3 +57,23 @@ issuerSolvers:
         secretAccessKeySecretRef:
           name: route53-dns-access
           key: SECRET_KEY
+volumes:
+  - name: 'test-volume'
+    persistentVolumeClaim:
+      claimName: 'test-claim'
+    mountPath: '/opt/data'
+volumeClaims:
+  - name: 'test-claim'
+    storageClassName: gp2
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: '3Gi'
+volumeStorages:
+  - name: 'test-storage'
+    storageClassName: gp2
+    capacity:
+      storage: '3Gi'
+    accessModes:
+      - ReadWriteOnce

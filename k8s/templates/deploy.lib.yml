@@ -25,6 +25,12 @@ spec:
     metadata:
       labels: #@ utils.defaultLabels("pod")
     spec:
+      #@ if data.values.volumes:
+      volumes:
+      #@   for volume in data.values.volumes:
+        - #@ {"name": volume.name, "persistentVolumeClaim": volume.persistentVolumeClaim}
+      #@   end
+      #@ end
       containers:
         - image: #@ utils.imageName()
           imagePullPolicy: Always
@@ -46,6 +52,12 @@ spec:
           ports:
             - containerPort: 8080
               name: main-http
+          #@ if data.values.volumes:
+          volumeMounts:
+          #@   for volume in data.values.volumes:
+            - #@ {"name": volume.name, "mountPath": volume.mountPath}
+          #@   end
+          #@ end
           readinessProbe:
             httpGet:
               path: #@ data.values.healthcheckPath
