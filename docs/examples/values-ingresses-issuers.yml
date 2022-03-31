@@ -12,8 +12,10 @@ additionalIngresses:
         http:
           paths:
           - backend:
-              serviceName: service-axon-dos-web
-              servicePort: 80
+              service:
+                name: service-axon-dos-web
+                port:
+                  number: 80
             path: /(.*)
             pathType: ImplementationSpecific
     tls:
@@ -32,8 +34,10 @@ additionalIngresses:
         http:
           paths:
           - backend:
-              serviceName: service-axon-dos-web
-              servicePort: 80
+              service:
+                name: service-axon-dos-web
+                port:
+                  number: 80
             path: /(.*)
             pathType: ImplementationSpecific
     tls:
@@ -46,8 +50,10 @@ additionalIngresses:
         http:
           paths:
           - backend:
-              serviceName: service-axon-dos-web
-              servicePort: 80
+              service:
+                name: service-axon-dos-web
+                port:
+                  number: 80
             path: /(.*)
             pathType: ImplementationSpecific
     tls:
