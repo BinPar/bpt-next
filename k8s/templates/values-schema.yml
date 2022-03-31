@@ -3,7 +3,7 @@
 projectName: ''
 #@schema/nullable
 namespace: ''
-defaultRootDomain: 'binpar.online'
+defaultRootDomain: 'binpar.cloud'
 productionDomain: ''
 environment: ''
 healthcheckPath: '/healthcheck'
