@@ -64,3 +64,23 @@ volumeStorages:
 #!      storage: ''
 #!    accessModes:
 #!      - ReadWriteOnce
+useOnlyAdditionalIngresses: False
+additionalIngresses:
+  - name: ''
+    #@schema/nullable
+    environment: ''
+    #@schema/type any=True
+    annotations:
+    #@schema/type any=True
+    rules:
+    #@schema/type any=True
+    tls:
+useOnlyAdditionalIssuers: False
+additionalIssuers:
+  - name: ''
+    #@schema/nullable
+    environment: ''
+    privateKeySecretRef:
+      name: ''
+    #@schema/type any=True
+    solvers:
