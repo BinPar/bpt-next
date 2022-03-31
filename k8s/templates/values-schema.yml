@@ -23,8 +23,12 @@ baseCPULimit: 80
 releaseFactorCPULimit: 2.0
 #@schema/type any=True
 defaultConfig:
-#@schema/type any=True
 configMaps:
+  - name: ''
+    #@schema/nullable
+    environment: ''
+    #@schema/type any=True
+    data:
 #@schema/type any=True
 ingressAnnotations:
 #@schema/type any=True
