@@ -22,6 +22,15 @@ releaseFactorCPURequest: 1.0
 baseCPULimit: 80
 releaseFactorCPULimit: 2.0
 #@schema/type any=True
+podAdditionalConfig:
+podAdditionalConfigByEnvironment:
+  #@schema/type any=True
+  test:
+  #@schema/type any=True
+  pre-release:
+  #@schema/type any=True
+  release:
+#@schema/type any=True
 defaultConfig:
 configMaps:
   - name: ''

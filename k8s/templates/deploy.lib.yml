@@ -76,4 +76,8 @@ spec:
             limits:
               memory: #@ memory(data.values.baseRAMLimit * data.values.releaseFactorRAMLimit) if utils.isRelease() else memory(data.values.baseRAMLimit)
               cpu: #@ cpu(data.values.baseCPULimit * data.values.releaseFactorCPULimit) if utils.isRelease() else cpu(data.values.baseCPULimit)
+      #@ if/end data.values.podAdditionalConfig:
+      _: #@ template.replace(data.values.podAdditionalConfig)
+      #@ if/end data.values.podAdditionalConfigByEnvironment and data.values.podAdditionalConfigByEnvironment[data.values.environment]:
+      _: #@ template.replace(data.values.podAdditionalConfigByEnvironment[data.values.environment])
 #@ end
