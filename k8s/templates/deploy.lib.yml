@@ -1,4 +1,5 @@
 #@ load("@ytt:data", "data")
+#@ load("@ytt:template", "template")
 #@ load("utils.star", "utils")
 
 #@ def cpu(n):
