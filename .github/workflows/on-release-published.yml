@@ -41,6 +41,33 @@ jobs:
       # - run: ln -sf ${{ steps.kubernetes-tools.outputs.kubectl-path }} /usr/bin/kubectl
       - name: Login kubectl with EKS
         run: aws eks update-kubeconfig --name ${{ secrets.RELEASE_K8S_CLUSTER_NAME }} --role-arn ${{ secrets.AWS_EKS_ROLE }}
+      - name: Get namespace
+        run: |
+          K8S_NAMESPACE_NAME=$(./.github/workflows/get-namespace-name.js)
+          echo "K8S_NAMESPACE_NAME=$K8S_NAMESPACE_NAME" >> $GITHUB_ENV
+      - name: Get repository team ids
+        uses: actions/github-script@v5
+        id: repo-teams
+        with:
+          result-encoding: string
+          github-token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+          script: |
+            const teamsResponse = await github.rest.repos.listTeams({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+            if (teamsResponse.status === 200) {
+              const teams = teamsResponse.data;
+              if (teams && teams.length > 0) {
+                return teams
+                  .map((team) => team.slug)
+                  .join(' ');
+              }
+            }
+            return '';
+      - name: Grant read permissions to Github teams
+        if: steps.repo-teams.outputs.result != ''
+        run: ./.github/workflows/create-k8s-team-roles.sh "${{ env.K8S_NAMESPACE_NAME }}" "${{ steps.repo-teams.outputs.result }}" "${{ github.repository_owner }}"
       - name: Pull version docker image for tag
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -55,8 +82,7 @@ jobs:
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$NEXT_VERSION $ECR_REGISTRY/$ECR_REPOSITORY:pre-release
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:pre-release
           ./.github/workflows/create-k8s-if-not-exists.sh "pre-release"
-          K8S_NAMESPACE_NAME=$(./.github/workflows/get-namespace-name.js)
-          ./.github/workflows/redeploy.sh "${K8S_NAMESPACE_NAME}" "${{ steps.project-name-data.outputs.data }}" "pre-release"
+          ./.github/workflows/redeploy.sh "${{ env.K8S_NAMESPACE_NAME }}" "${{ steps.project-name-data.outputs.data }}" "pre-release"
           echo "TAG_TYPE=pre-release" >> $GITHUB_ENV
       - name: Tag as release
         if: '!github.event.release.prerelease'
@@ -67,8 +93,7 @@ jobs:
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$NEXT_VERSION $ECR_REGISTRY/$ECR_REPOSITORY:release
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:release
           ./.github/workflows/create-k8s-if-not-exists.sh "release"
-          K8S_NAMESPACE_NAME=$(./.github/workflows/get-namespace-name.js)
-          ./.github/workflows/redeploy.sh "${K8S_NAMESPACE_NAME}" "${{ steps.project-name-data.outputs.data }}" "release"
+          ./.github/workflows/redeploy.sh "${{ env.K8S_NAMESPACE_NAME }}" "${{ steps.project-name-data.outputs.data }}" "release"
           echo "TAG_TYPE=release" >> $GITHUB_ENV
       - name: Tag image success
         uses: sarisia/actions-status-discord@v1
