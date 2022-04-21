@@ -63,7 +63,7 @@ jobs:
       - name: Cache Docker layers
         uses: actions/cache@v2
         with:
-          path: /tmp/.buildx-cache-${{ github.repository }}
+          path: /home/ubuntu/docker-cache/buildx-cache-${{ github.repository }}
           key: ${{ runner.os }}-${{ github.repository }}-single-buildx-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-${{ github.repository }}-single-buildx
@@ -77,12 +77,12 @@ jobs:
           tags: |
             ${{ steps.login-ecr.outputs.registry }}/${{ steps.project-name-data.outputs.data }}:latest
             ${{ steps.login-ecr.outputs.registry }}/${{ steps.project-name-data.outputs.data }}:${{ env.NEXT_VERSION }}
-          cache-from: type=local,src=/tmp/.buildx-cache-${{ github.repository }}
-          cache-to: type=local,dest=/tmp/.buildx-cache-${{ github.repository }}-new
+          cache-from: type=local,src=/home/ubuntu/docker-cache/buildx-cache-${{ github.repository }}
+          cache-to: type=local,dest=/home/ubuntu/docker-cache/buildx-cache-${{ github.repository }}-new
       - name: Move Docker cache
         run: |
-          rm -rf /tmp/.buildx-cache-${{ github.repository }}
-          mv /tmp/.buildx-cache-${{ github.repository }}-new /tmp/.buildx-cache-${{ github.repository }}
+          rm -rf /home/ubuntu/docker-cache/buildx-cache-${{ github.repository }}
+          mv /home/ubuntu/docker-cache/buildx-cache-${{ github.repository }}-new /home/ubuntu/docker-cache/buildx-cache-${{ github.repository }}
       - name: Setup Kubernetes Tools
         uses: azure/setup-kubectl@v2.0
         id: kubernetes-tools
@@ -128,7 +128,7 @@ jobs:
           push: true
           tags: |
             ${{ steps.login-ecr.outputs.registry }}/${{ steps.project-name-data.outputs.data }}:test
-          cache-from: type=local,src=/tmp/.buildx-cache-${{ github.repository }}
+          cache-from: type=local,src=/home/ubuntu/docker-cache/buildx-cache-${{ github.repository }}
       - name: Redeploy to apply new image
         run: ./.github/workflows/redeploy.sh "${{ env.K8S_NAMESPACE_NAME }}" "${{ steps.project-name-data.outputs.data }}" "${{ env.CUSTOM_ENVIRONMENT }}"
       - name: Update repo
