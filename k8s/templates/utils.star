@@ -37,6 +37,7 @@ def monitorName():
   return data.values.projectName+"-servicemonitor"
 end
 
+
 def ingressName():
   return "ingress-"+data.values.projectName+"-"+data.values.environment
 end
@@ -57,12 +58,13 @@ def isRelease():
   return data.values.environment == "release"
 end
 
+
 def isTest():
   return data.values.environment == "test"
 end
 
 def defaultLabels(instance):
-  return {'app.kubernetes.io/name': data.values.projectName, 'app.kubernetes.io/instance': instance, 'app.kubernetes.io/environment': data.values.environment }
+  return { 'app.kubernetes.io/name': data.values.projectName, 'app.kubernetes.io/instance': instance, 'app.kubernetes.io/environment': data.values.environment }
 end
 
 def defaultHostname():
@@ -73,15 +75,7 @@ def defaultHostname():
       return data.values.projectName+"." + data.values.defaultRootDomain
     end
   else:
-    if isTest():
-      if data.values.testDomain:
-        return data.values.testDomain
-      else:
-        return data.values.projectName+"-"+data.values.environment+"." + data.values.defaultRootDomain
-      end
-    else:
-      return data.values.projectName+"-"+data.values.environment+"." + data.values.defaultRootDomain
-    end
+    return data.values.projectName+"-"+data.values.environment+"." + data.values.defaultRootDomain
   end
 end
 
@@ -115,4 +109,4 @@ def recursiveLookupForStringAndReplace(obj, lookupString, newValue):
   return obj
 end
 
-utils = struct.make(recursiveLookupForStringAndReplace=recursiveLookupForStringAndReplace, replaceDefaultServiceNameInRules=replaceDefaultServiceNameInRules, certificateName=certificateName, defaultConfigMapName=defaultConfigMapName, imageName=imageName, isRelease=isRelease, deployName=deployName, serviceName=serviceName, ingressName=ingressName, defaultLabels=defaultLabels, defaultHostname=defaultHostname, namespaceName=namespaceName, appName=appName, monitorName=monitorName, projectName=projectName)
+utils = struct.make(recursiveLookupForStringAndReplace=recursiveLookupForStringAndReplace, replaceDefaultServiceNameInRules=replaceDefaultServiceNameInRules, certificateName=certificateName, defaultConfigMapName=defaultConfigMapName, imageName=imageName, isRelease=isRelease, deployName=deployName, serviceName=serviceName, ingressName=ingressName, defaultLabels=defaultLabels, defaultHostname=defaultHostname, namespaceName=namespaceName)

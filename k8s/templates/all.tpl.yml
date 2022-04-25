@@ -1,13 +1,15 @@
+#@ load("@ytt:data", "data")
 #@ load("namespace.lib.yml", "getNamespace")
 #@ load("deploy.lib.yml", "getDeploy")
 #@ load("service.lib.yml", "getService")
 #@ load("serviceMonitor.lib.yml", "getServiceMonitor")
-#@ load("ingress.lib.yml", "getIngress")
-#@ load("issuer.lib.yml", "getIssuer")
+#@ load("ingress.lib.yml", "getIngress", "getAdditionalIngresses")
+#@ load("issuer.lib.yml", "getIssuer", "getAdditionalIssuers")
 #@ load("volumes.lib.yml", "getVolumeStorages", "getVolumeClaims")
 #@ load("conf-map.lib.yml", "getDefaultConfigMap", "getValuesConfigMap")
 
 --- #@ getNamespace()
+#@ if/end not data.values.useOnlyAdditionalIssuers:
 --- #@ getIssuer()
 #@ volumeStorages = getVolumeStorages()
 #@ for/end volumeStorage in volumeStorages:
@@ -18,8 +20,15 @@
 --- #@ getDeploy()
 --- #@ getService()
 --- #@ getServiceMonitor()
+#@ if/end not data.values.useOnlyAdditionalIngresses:
 --- #@ getIngress()
 --- #@ getDefaultConfigMap()
+#@ ingresses = getAdditionalIngresses()
+#@ for/end ingress in ingresses:
+--- #@ ingress
+#@ issuers = getAdditionalIssuers()
+#@ for/end issuer in issuers:
+--- #@ issuer
 #@ configs = getValuesConfigMap()
 #@ for/end config in configs:
 --- #@ config
