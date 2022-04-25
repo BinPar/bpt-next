@@ -1,20 +1,19 @@
 {
-  "name": "binpar-web",
-  "version": "1.143.0",
-  "description": "The BinPar Web. The BinPar Way.",
+  "name": "bpt-next",
+  "version": "1.0.0",
+  "description": "An opinionated Node.js + Next.js boilerplate. The BinPar Way.",
   "scripts": {
     "build": "next build",
     "dev": "next dev",
+    "echo": "echo asd $environment asd",
     "lint": "eslint \"**/*.{ts,tsx}\" --ignore-pattern node_modules/ --ignore-pattern prod_node_modules/",
     "lint:print-config": "eslint --print-config .eslintrc",
     "setup-update-from-template": "git remote add template git@github.com:BinPar/bpt-next.git",
-    "echo": "echo asd $environment asd",
     "start": "next start -p 8080",
-    "typeCheck": "tsc -p ./ts.tsconfig.json",
     "test": "jest",
-    "test-coverage": "jest --coverage",
-    "test-coverage-dev": "NODE_ENV=development jest --coverage --watchAll",
-    "test-dev": "NODE_ENV=development jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:coverage-dev": "NODE_ENV=development jest --coverage --watchAll",
+    "test:dev": "NODE_ENV=development jest --watch",
     "type-check": "tsc -p ./ts.tsconfig.json",
     "update-from-template": "git pull template develop --allow-unrelated-histories --squash",
     "use-node-tls": ". ~/.nvm/nvm.sh && nvm install && nvm use"
@@ -22,18 +21,17 @@
   "engines": {
     "node": ">= 16.13"
   },
-  "homepage": "https://github.com/BinPar/binpar-web#readme",
+  "homepage": "https://github.com/BinPar/bpt-next#readme",
   "author": "Ignacio Ferro <nacho@binpar.com> (https://www.binpar.com/)",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/BinPar/binpar-web.git"
+    "url": "git+https://github.com/BinPar/bpt-next.git"
   },
   "bugs": {
-    "url": "https://github.com/BinPar/binpar-web/issues"
+    "url": "https://github.com/BinPar/bpt-next/issues"
   },
   "license": "ISC",
   "dependencies": {
-    "@tailwindcss/line-clamp": "^0.3.1",
     "next": "^12.0.10",
     "next-i18next": "^10.5.0",
     "prom-client": "^14.0.1",
@@ -51,7 +49,6 @@
     "@typescript-eslint/parser": "^5.11.0",
     "autoprefixer": "^10.4.2",
     "babel-jest": "^27",
-    "enzyme": "^3.11.0",
     "eslint": "^8.8.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^16.1.0",
@@ -62,7 +59,6 @@
     "eslint-plugin-jsx-a11y": "^6",
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-react": "^7",
-    "eslint-plugin-react-hooks": "^4",
     "jest": "^27",
     "jest-watch-typeahead": "^1.0.0",
     "postcss": "^8.4.6",

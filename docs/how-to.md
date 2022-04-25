@@ -158,10 +158,10 @@ También se puede añadir una imagen distinta creando otra secret que se llame `
 
 ## Mantener actualizado el template
 
-Una parte importante de esto es poder mantener el template actualizado, para esto el template incorpora en el package.json un par de scripts de npm `setupUpdateFromTemplate` y `updateFromTemplate`.
+Una parte importante de esto es poder mantener el template actualizado, para esto el template incorpora en el package.json un par de scripts de npm `setup-update-from-template` y `update-from-template`.
 
-- `setupUpdateFromTemplate`: establece un nuevo remote de git con el nombre de "template" que apunta al repositorio del template. **Este comando solo hay que ejecutarlo una vez**.
-- `updateFromTemplate`: este comando se traerá los cambios del template original que pueden tener conflictos en algún archivo que hayamos modificado y que tendremos que resolver a mano para asegurarnos de que elegir lo correcto.
+- `setup-update-from-template`: establece un nuevo remote de git con el nombre de "template" que apunta al repositorio del template. **Este comando solo hay que ejecutarlo una vez**.
+- `update-from-template`: este comando se traerá los cambios del template original que pueden tener conflictos en algún archivo que hayamos modificado y que tendremos que resolver a mano para asegurarnos de que elegir lo correcto.
 
 ## Casos especiales
 
