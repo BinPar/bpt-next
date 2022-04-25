@@ -1,17 +1,9 @@
-import { Ambient } from '../model/data';
-import { Theme } from '../model/react';
-
-export const defaultTheme: Theme = 'dark';
-
 export const themeStorageKey = 'theme';
 
-export const ambient = process.env.ambient as Ambient;
+export const {ambient} = process.env;
 
 export const baseUrl =
-  ambient === 'release' ? 'https://binpar.com' : 'https://web-test.binpar.cloud';
-
-export const cndURL =
-  ambient === 'release' ? 'https://binpar-web.imgix.net' : 'https://binpar-web-test.imgix.net';
+  ambient === 'release' ? 'https://bpt-next-web-test.binpar.cloud' : 'https://bpt-next-web.binpar.cloud';
 
 export const baseModelUrl = (): string => {
   if (window.location.protocol.startsWith('https')) {
