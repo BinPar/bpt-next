@@ -17,12 +17,24 @@ def namespaceName():
   end
 end
 
+def projectName():
+  return data.values.projectName
+end
+
 def deployName():
   return "deploy-"+data.values.projectName
 end
 
 def serviceName():
   return "service-"+data.values.projectName
+end
+
+def appName():
+  return data.values.projectName+"-runner"
+end
+
+def monitorName():
+  return data.values.projectName+"-servicemonitor"
 end
 
 def ingressName():
@@ -45,8 +57,12 @@ def isRelease():
   return data.values.environment == "release"
 end
 
+def isTest():
+  return data.values.environment == "test"
+end
+
 def defaultLabels(instance):
-  return { 'app.kubernetes.io/name': data.values.projectName, 'app.kubernetes.io/instance': instance, 'app.kubernetes.io/environment': data.values.environment }
+  return {'app.kubernetes.io/name': data.values.projectName, 'app.kubernetes.io/instance': instance, 'app.kubernetes.io/environment': data.values.environment }
 end
 
 def defaultHostname():
@@ -57,7 +73,15 @@ def defaultHostname():
       return data.values.projectName+"." + data.values.defaultRootDomain
     end
   else:
-    return data.values.projectName+"-"+data.values.environment+"." + data.values.defaultRootDomain
+    if isTest():
+      if data.values.testDomain:
+        return data.values.testDomain
+      else:
+        return data.values.projectName+"-"+data.values.environment+"." + data.values.defaultRootDomain
+      end
+    else:
+      return data.values.projectName+"-"+data.values.environment+"." + data.values.defaultRootDomain
+    end
   end
 end
 
@@ -91,4 +115,4 @@ def recursiveLookupForStringAndReplace(obj, lookupString, newValue):
   return obj
 end
 
-utils = struct.make(recursiveLookupForStringAndReplace=recursiveLookupForStringAndReplace, replaceDefaultServiceNameInRules=replaceDefaultServiceNameInRules, certificateName=certificateName, defaultConfigMapName=defaultConfigMapName, imageName=imageName, isRelease=isRelease, deployName=deployName, serviceName=serviceName, ingressName=ingressName, defaultLabels=defaultLabels, defaultHostname=defaultHostname, namespaceName=namespaceName)
+utils = struct.make(recursiveLookupForStringAndReplace=recursiveLookupForStringAndReplace, replaceDefaultServiceNameInRules=replaceDefaultServiceNameInRules, certificateName=certificateName, defaultConfigMapName=defaultConfigMapName, imageName=imageName, isRelease=isRelease, deployName=deployName, serviceName=serviceName, ingressName=ingressName, defaultLabels=defaultLabels, defaultHostname=defaultHostname, namespaceName=namespaceName, appName=appName, monitorName=monitorName, projectName=projectName)

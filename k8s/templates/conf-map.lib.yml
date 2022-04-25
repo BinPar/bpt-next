@@ -19,7 +19,7 @@ data:
 #@   configs = []
 #@   if data.values.configMaps:
 #@     for configMap in data.values.configMaps:
-#@       if not configMap.environment or configMap.environment == data.values.environment:
+#@       if (configMap.environment == data.values.environment):
 #@         configs.append({"apiVersion": "v1", "kind": "ConfigMap", "metadata": {"name": configMap.name, "namespace": utils.namespaceName()}, "data": configMap.data})
 #@       end
 #@     end

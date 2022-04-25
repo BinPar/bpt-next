@@ -8,11 +8,15 @@ metadata:
   name: #@ utils.serviceName()
   labels: #@ utils.defaultLabels("service")
   namespace: #@ utils.namespaceName()
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/scheme: 'http'
 spec:
   ports:
     - port: 80
       protocol: TCP
       targetPort: main-http
+      name: main-http
   selector: #@ utils.defaultLabels("pod")
   sessionAffinity: None
   type: ClusterIP

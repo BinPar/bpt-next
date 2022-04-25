@@ -3,7 +3,8 @@
 projectName: ''
 #@schema/nullable
 namespace: ''
-defaultRootDomain: 'binpar.cloud'
+defaultRootDomain: 'binpar.online'
+testDomain: ''
 productionDomain: ''
 environment: ''
 healthcheckPath: '/healthcheck'
@@ -22,22 +23,9 @@ releaseFactorCPURequest: 1.0
 baseCPULimit: 80
 releaseFactorCPULimit: 2.0
 #@schema/type any=True
-podAdditionalConfig:
-podAdditionalConfigByEnvironment:
-  #@schema/type any=True
-  test:
-  #@schema/type any=True
-  pre-release:
-  #@schema/type any=True
-  release:
-#@schema/type any=True
 defaultConfig:
+#@schema/type any=True
 configMaps:
-  - name: ''
-    #@schema/nullable
-    environment: ''
-    #@schema/type any=True
-    data:
 #@schema/type any=True
 ingressAnnotations:
 #@schema/type any=True
@@ -73,23 +61,3 @@ volumeStorages:
 #!      storage: ''
 #!    accessModes:
 #!      - ReadWriteOnce
-useOnlyAdditionalIngresses: False
-additionalIngresses:
-  - name: ''
-    #@schema/nullable
-    environment: ''
-    #@schema/type any=True
-    annotations:
-    #@schema/type any=True
-    rules:
-    #@schema/type any=True
-    tls:
-useOnlyAdditionalIssuers: False
-additionalIssuers:
-  - name: ''
-    #@schema/nullable
-    environment: ''
-    privateKeySecretRef:
-      name: ''
-    #@schema/type any=True
-    solvers:

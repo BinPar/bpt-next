@@ -2,3 +2,4 @@
 ---
 projectName: bpt-next-web
 productionDomain: bpt-next-web.binpar.cloud
+healthcheckPath: '/api/healthcheck'

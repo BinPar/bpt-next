@@ -1,0 +1,24 @@
+#@ load("@ytt:data", "data")
+#@ load("utils.star", "utils")
+
+#@ def getServiceMonitor():
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: #@ utils.monitorName()
+  namespace: monitoring
+  labels:
+    'app.kubernetes.io/name': #@ utils.projectName()
+    release: prometheus
+spec:
+  namespaceSelector:
+    matchNames:
+    - #@ utils.namespaceName()
+  selector:
+    matchLabels:
+      'app.kubernetes.io/name': #@ utils.projectName()
+      'app.kubernetes.io/instance': service
+  endpoints:
+  - port: main-http
+    interval: 15s
+#@ end
