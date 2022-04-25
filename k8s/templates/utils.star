@@ -109,4 +109,4 @@ def recursiveLookupForStringAndReplace(obj, lookupString, newValue):
   return obj
 end
 
-utils = struct.make(recursiveLookupForStringAndReplace=recursiveLookupForStringAndReplace, replaceDefaultServiceNameInRules=replaceDefaultServiceNameInRules, certificateName=certificateName, defaultConfigMapName=defaultConfigMapName, imageName=imageName, isRelease=isRelease, deployName=deployName, serviceName=serviceName, ingressName=ingressName, defaultLabels=defaultLabels, defaultHostname=defaultHostname, namespaceName=namespaceName)
+utils = struct.make(recursiveLookupForStringAndReplace=recursiveLookupForStringAndReplace, replaceDefaultServiceNameInRules=replaceDefaultServiceNameInRules, certificateName=certificateName, defaultConfigMapName=defaultConfigMapName, imageName=imageName, isRelease=isRelease, deployName=deployName, serviceName=serviceName, ingressName=ingressName, defaultLabels=defaultLabels, defaultHostname=defaultHostname, namespaceName=namespaceName, monitorName=monitorName)
