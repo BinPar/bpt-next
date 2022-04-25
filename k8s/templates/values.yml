@@ -2,4 +2,16 @@
 ---
 projectName: bpt-next-web
 productionDomain: bpt-next-web.binpar.cloud
-healthcheckPath: '/api/healthcheck'
+additionalDeployEnvSources:
+  - configMapRef:
+      name: web-config
+      optional: false
+configMaps:
+  - name: web-config
+    environment: test
+    data:
+      ambient: test
+  - name: web-config
+    environment: release
+    data:
+      ambient: release
