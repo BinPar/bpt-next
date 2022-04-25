@@ -28,6 +28,5 @@ module.exports = {
     plugin(function ({ addVariant }) {
       addVariant('label-focus', "input[type='checkbox']:focus + label &");
     }),
-    require('@tailwindcss/line-clamp'),
   ],
 };
