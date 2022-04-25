@@ -106,13 +106,19 @@ A continuación vemos lo que es cada configuración:
 - useOnlyAdditionalIssuers: Boolean - Por defecto False. Indica cuándo solo se usarán los issuers adicionales especificados más abajo. **OJO**: NO se creará el issuer por defecto (letsencrypt-prod).
 - additionalIssuers:  YAML array - Aquí se puede especificar N issuers que se crearán adicionalmente. El formato de los miembros del array es un objeto que tiene una propiedad `name` que será el nombre del issuer, una propiedad `privateKeySecretRef` para añadir esta propiedad al issuer y una propiedad `solvers` para especificar estos en el issuer. Además se puede especificar una propiedad `environment` opcionalmente para que solo se despliegue en ese entorno.
 
+### Configuración de rutas
+
+En `src/config/index.ts` deberemos configurar las rutas tanto de test como de producción para nuestro proyecto.
+
 ## Healthcheck y tests
 
 Como parte del flujo que se describe más abajo es obligatorio tener un healthcheck y mínimo un test para que las pull requests sean válidas.
 
-En el directorio `docs/examples` tenéis un ejemplo de healthcheck muy sencillo y otro de un test básico.
+En el directorio `docs/examples` tenéis un ejemplo de healthcheck muy sencillo y otro de un test básico, aunque ya están configurados en el proyecto.
 
 Los tests deben colocarse en una carpeta `tests` en el root del repositorio.
+
+Por otro lado según dependamos de otros servicios para la aplicación, deberemos añadirlos al healthcheck para estar seguros de verificar su estado de forma correcta.
 
 ## BinFlow way (link a documentación BinFlow extendida)
 
