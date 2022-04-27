@@ -41,8 +41,16 @@ jobs:
       # - run: ln -sf ${{ steps.kubernetes-tools.outputs.kubectl-path }} /usr/bin/kubectl
       - name: Login kubectl with EKS
         run: aws eks update-kubeconfig --name ${{ secrets.RELEASE_K8S_CLUSTER_NAME }} --role-arn ${{ secrets.AWS_EKS_ROLE }}
-      - name: Get namespace
+      - name: Get namespace pre-release
+        if: 'github.event.release.prerelease'
         run: |
+          ./.github/workflows/create-k8s-if-not-exists.sh "pre-release"
+          K8S_NAMESPACE_NAME=$(./.github/workflows/get-namespace-name.js)
+          echo "K8S_NAMESPACE_NAME=$K8S_NAMESPACE_NAME" >> $GITHUB_ENV
+      - name: Get namespace release
+        if: '!github.event.release.prerelease'
+        run: |
+          ./.github/workflows/create-k8s-if-not-exists.sh "release"
           K8S_NAMESPACE_NAME=$(./.github/workflows/get-namespace-name.js)
           echo "K8S_NAMESPACE_NAME=$K8S_NAMESPACE_NAME" >> $GITHUB_ENV
       - name: Get repository team ids
@@ -81,7 +89,6 @@ jobs:
         run: |
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$NEXT_VERSION $ECR_REGISTRY/$ECR_REPOSITORY:pre-release
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:pre-release
-          ./.github/workflows/create-k8s-if-not-exists.sh "pre-release"
           ./.github/workflows/redeploy.sh "${{ env.K8S_NAMESPACE_NAME }}" "${{ steps.project-name-data.outputs.data }}" "pre-release"
           echo "TAG_TYPE=pre-release" >> $GITHUB_ENV
       - name: Tag as release
@@ -92,7 +99,6 @@ jobs:
         run: |
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$NEXT_VERSION $ECR_REGISTRY/$ECR_REPOSITORY:release
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:release
-          ./.github/workflows/create-k8s-if-not-exists.sh "release"
           ./.github/workflows/redeploy.sh "${{ env.K8S_NAMESPACE_NAME }}" "${{ steps.project-name-data.outputs.data }}" "release"
           echo "TAG_TYPE=release" >> $GITHUB_ENV
       - name: Tag image success
