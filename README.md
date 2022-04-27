@@ -4,4 +4,3 @@
 > exception of **pages** and **tests** needs to be included under the **src** folder
 
 Right after clone the repository execute inside: `npm run useNodeLTS`.
-

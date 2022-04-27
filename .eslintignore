@@ -4,3 +4,4 @@ prod_node_modules
 next-env.d.ts
 jest.config.js
 jest.setup.js
+*.config.js

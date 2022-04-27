@@ -3,7 +3,7 @@
 projectName: ''
 #@schema/nullable
 namespace: ''
-defaultRootDomain: 'binpar.cloud'
+defaultRootDomain: 'binpar.online'
 productionDomain: ''
 environment: ''
 healthcheckPath: '/healthcheck'
@@ -11,7 +11,7 @@ initialDelaySeconds: 4
 failureThreshold: 2
 timeoutSeconds: 5
 periodSeconds: 60
-baseReplicas: 2
+baseReplicas: 1
 releaseFactorReplicas: 2.0
 baseRAMRequest: 64
 releaseFactorRAMRequest: 2.0

@@ -17,6 +17,10 @@ def namespaceName():
   end
 end
 
+def projectName():
+  return data.values.projectName
+end
+
 def deployName():
   return "deploy-"+data.values.projectName
 end
@@ -24,6 +28,15 @@ end
 def serviceName():
   return "service-"+data.values.projectName
 end
+
+def appName():
+  return data.values.projectName+"-runner"
+end
+
+def monitorName():
+  return data.values.projectName+"-servicemonitor"
+end
+
 
 def ingressName():
   return "ingress-"+data.values.projectName+"-"+data.values.environment
@@ -43,6 +56,11 @@ end
 
 def isRelease():
   return data.values.environment == "release"
+end
+
+
+def isTest():
+  return data.values.environment == "test"
 end
 
 def defaultLabels(instance):
@@ -91,4 +109,4 @@ def recursiveLookupForStringAndReplace(obj, lookupString, newValue):
   return obj
 end
 
-utils = struct.make(recursiveLookupForStringAndReplace=recursiveLookupForStringAndReplace, replaceDefaultServiceNameInRules=replaceDefaultServiceNameInRules, certificateName=certificateName, defaultConfigMapName=defaultConfigMapName, imageName=imageName, isRelease=isRelease, deployName=deployName, serviceName=serviceName, ingressName=ingressName, defaultLabels=defaultLabels, defaultHostname=defaultHostname, namespaceName=namespaceName)
+utils = struct.make(recursiveLookupForStringAndReplace=recursiveLookupForStringAndReplace, replaceDefaultServiceNameInRules=replaceDefaultServiceNameInRules, certificateName=certificateName, defaultConfigMapName=defaultConfigMapName, imageName=imageName, isRelease=isRelease, deployName=deployName, serviceName=serviceName, ingressName=ingressName, defaultLabels=defaultLabels, defaultHostname=defaultHostname, namespaceName=namespaceName, monitorName=monitorName, projectName=projectName)

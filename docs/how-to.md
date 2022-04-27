@@ -71,7 +71,7 @@ A continuación vemos lo que es cada configuración:
 
 - projectName: **Required** String - Indica el nombre del proyecto y se usa en los templates de k8s
 - namespace: String - El namespace de k8s en el que se despliegan los recursos (siempre se añade `-<environment>` al final automáticamente). Si se omite el namespace se infiere con el siguiente pattern `<projectName>-<environment>`.
-- defaultRootDomain: String - Por defecto `binpar.cloud`. Es el dominio sobre el que se construyen los subdominios para los distintos entornos.
+- defaultRootDomain: String - Por defecto `binpar.online`. Es el dominio sobre el que se construyen los subdominios para los distintos entornos.
 - productionDomain: String - El dominio que se utilizará para el entorno de `release`. Si se omite se infiere usando el defaultRootDomain.
 - environment: **No rellenar, omitir siempre**. Los pipelines del CI / CD rellenan este parámetro
 - healthcheckPath: String - Pro defecto `/healthcheck`. Es el endpoint donde k8s va a comprobar que la web está disponible periódicamente.
@@ -106,13 +106,19 @@ A continuación vemos lo que es cada configuración:
 - useOnlyAdditionalIssuers: Boolean - Por defecto False. Indica cuándo solo se usarán los issuers adicionales especificados más abajo. **OJO**: NO se creará el issuer por defecto (letsencrypt-prod).
 - additionalIssuers:  YAML array - Aquí se puede especificar N issuers que se crearán adicionalmente. El formato de los miembros del array es un objeto que tiene una propiedad `name` que será el nombre del issuer, una propiedad `privateKeySecretRef` para añadir esta propiedad al issuer y una propiedad `solvers` para especificar estos en el issuer. Además se puede especificar una propiedad `environment` opcionalmente para que solo se despliegue en ese entorno.
 
+### Configuración de rutas
+
+En `src/config/index.ts` deberemos configurar las rutas tanto de test como de producción para nuestro proyecto.
+
 ## Healthcheck y tests
 
 Como parte del flujo que se describe más abajo es obligatorio tener un healthcheck y mínimo un test para que las pull requests sean válidas.
 
-En el directorio `docs/examples` tenéis un ejemplo de healthcheck muy sencillo y otro de un test básico.
+En el directorio `docs/examples` tenéis un ejemplo de healthcheck muy sencillo y otro de un test básico, aunque ya están configurados en el proyecto.
 
 Los tests deben colocarse en una carpeta `tests` en el root del repositorio.
+
+Por otro lado según dependamos de otros servicios para la aplicación, deberemos añadirlos al healthcheck para estar seguros de verificar su estado de forma correcta.
 
 ## BinFlow way (link a documentación BinFlow extendida)
 
@@ -152,10 +158,10 @@ También se puede añadir una imagen distinta creando otra secret que se llame `
 
 ## Mantener actualizado el template
 
-Una parte importante de esto es poder mantener el template actualizado, para esto el template incorpora en el package.json un par de scripts de npm `setupUpdateFromTemplate` y `updateFromTemplate`.
+Una parte importante de esto es poder mantener el template actualizado, para esto el template incorpora en el package.json un par de scripts de npm `setup-update-from-template` y `update-from-template`.
 
-- `setupUpdateFromTemplate`: establece un nuevo remote de git con el nombre de "template" que apunta al repositorio del template. **Este comando solo hay que ejecutarlo una vez**.
-- `updateFromTemplate`: este comando se traerá los cambios del template original que pueden tener conflictos en algún archivo que hayamos modificado y que tendremos que resolver a mano para asegurarnos de que elegir lo correcto.
+- `setup-update-from-template`: establece un nuevo remote de git con el nombre de "template" que apunta al repositorio del template. **Este comando solo hay que ejecutarlo una vez**.
+- `update-from-template`: este comando se traerá los cambios del template original que pueden tener conflictos en algún archivo que hayamos modificado y que tendremos que resolver a mano para asegurarnos de que elegir lo correcto.
 
 ## Casos especiales
 
