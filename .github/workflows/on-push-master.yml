@@ -89,7 +89,7 @@ jobs:
         uses: azure/setup-kubectl@v2.0
         id: kubernetes-tools
         with:
-          version: latest
+          version: v1.22.8
       # - run: ln -sf ${{ steps.kubernetes-tools.outputs.kubectl-path }} /usr/bin/kubectl
       - name: Login kubectl with EKS
         run: aws eks update-kubeconfig --name ${{ secrets.TEST_K8S_CLUSTER_NAME }} --role-arn ${{ secrets.AWS_EKS_ROLE }}
