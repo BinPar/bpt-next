@@ -21,7 +21,13 @@ jobs:
         with:
           node-version: '16'
       - name: Ensure buildx cache dir exists
-        run: mkdir -p /home/ubuntu/docker-cache/buildx-cache-${{ github.repository }}
+        run: mkdir -p /tmp/docker-cache/buildx-cache-${{ github.repository }}
+      - name: Install Carvel YTT
+        run: |
+          curl -L -O https://github.com/vmware-tanzu/carvel-ytt/releases/download/v0.36.0/ytt-linux-arm64
+          chmod +x ytt-linux-arm64
+          sudo mv ytt-linux-arm64 /usr/bin/ytt
+          ytt --version
       - name: Get next version
         run: |
           echo "CUSTOM_ENVIRONMENT=test" >> $GITHUB_ENV
@@ -54,6 +60,8 @@ jobs:
           aws-region: eu-west-1
       - name: Create ECR repository if not exists
         run: ./.github/workflows/create-ecr-repository-if-not-exists.sh ${{ steps.project-name-data.outputs.data }}
+      - uses: docker/setup-buildx-action@v2
+        id: buildx
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
@@ -65,7 +73,7 @@ jobs:
       - name: Cache Docker layers
         uses: actions/cache@v2
         with:
-          path: /home/ubuntu/docker-cache/buildx-cache-${{ github.repository }}
+          path: /tmp/docker-cache/buildx-cache-${{ github.repository }}
           key: ${{ runner.os }}-${{ github.repository }}-single-buildx-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-${{ github.repository }}-single-buildx
@@ -79,12 +87,12 @@ jobs:
           tags: |
             ${{ steps.login-ecr.outputs.registry }}/${{ steps.project-name-data.outputs.data }}:latest
             ${{ steps.login-ecr.outputs.registry }}/${{ steps.project-name-data.outputs.data }}:${{ env.NEXT_VERSION }}
-          cache-from: type=local,src=/home/ubuntu/docker-cache/buildx-cache-${{ github.repository }}
-          cache-to: type=local,dest=/home/ubuntu/docker-cache/buildx-cache-${{ github.repository }}-new
+          cache-from: type=local,src=/tmp/docker-cache/buildx-cache-${{ github.repository }}
+          cache-to: type=local,dest=/tmp/docker-cache/buildx-cache-${{ github.repository }}-new
       - name: Move Docker cache
         run: |
-          rm -rf /home/ubuntu/docker-cache/buildx-cache-${{ github.repository }}
-          mv /home/ubuntu/docker-cache/buildx-cache-${{ github.repository }}-new /home/ubuntu/docker-cache/buildx-cache-${{ github.repository }}
+          rm -rf /tmp/docker-cache/buildx-cache-${{ github.repository }}
+          mv /tmp/docker-cache/buildx-cache-${{ github.repository }}-new /tmp/docker-cache/buildx-cache-${{ github.repository }}
       - name: Setup Kubernetes Tools
         uses: azure/setup-kubectl@v2.0
         id: kubernetes-tools
@@ -130,7 +138,7 @@ jobs:
           push: true
           tags: |
             ${{ steps.login-ecr.outputs.registry }}/${{ steps.project-name-data.outputs.data }}:test
-          cache-from: type=local,src=/home/ubuntu/docker-cache/buildx-cache-${{ github.repository }}
+          cache-from: type=local,src=/tmp/docker-cache/buildx-cache-${{ github.repository }}
       - name: Redeploy to apply new image
         run: ./.github/workflows/redeploy.sh "${{ env.K8S_NAMESPACE_NAME }}" "${{ steps.project-name-data.outputs.data }}" "${{ env.CUSTOM_ENVIRONMENT }}"
       - name: Update repo
