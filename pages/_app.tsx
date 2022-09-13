@@ -1,13 +1,16 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { appWithTranslation } from 'next-i18next';
+import { appWithTranslation, SSRConfig } from 'next-i18next';
 import { AppProps, NextWebVitalsMetric } from 'next/app';
 import Head from 'next/head';
 import { ComponentType } from 'react';
 
-import '../src/styles/globals.css';
 import addVitals from '../src/utils/addVitals';
 
-const App: ComponentType<AppProps> = ({ Component, pageProps }) => (
+import '../src/styles/globals.css';
+
+type AppPropsWithSSRConfig = AppProps & { pageProps: SSRConfig };
+
+const App: ComponentType<AppPropsWithSSRConfig> = ({ Component, pageProps }) => (
   <>
     <Head>
       <title>BinPar | Digital Ignition</title>
