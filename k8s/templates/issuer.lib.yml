@@ -15,6 +15,19 @@ spec:
       name: letsencrypt-prod
     #@ if data.values.issuerSolvers:
     solvers: #@ data.values.issuerSolvers
+    #@ elif utils.isTest():
+    #@ # zaun: el solver HTTP-01 tiene que nacer ya anotado como minion o pierde
+    #@ # la competicion por el host contra el master y el challenge nunca pasa.
+    #@ # Es `class`, no `ingressClassName`: ese campo llego en cert-manager 1.12
+    #@ # y el CRD vivo en zaun es 1.7.0.
+    solvers:
+      - http01:
+          ingress:
+            class: f5-nginx
+            ingressTemplate:
+              metadata:
+                annotations:
+                  nginx.org/mergeable-ingress-type: minion
     #@ else:
     solvers:
       - http01:

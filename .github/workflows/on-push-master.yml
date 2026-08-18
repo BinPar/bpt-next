@@ -71,7 +71,7 @@ jobs:
           git config user.email github-actions@github.com
           npm_config_yes=true npx standard-version
       - name: Cache Docker layers
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: /tmp/docker-cache/buildx-cache-${{ github.repository }}
           key: ${{ runner.os }}-${{ github.repository }}-single-buildx-${{ github.sha }}

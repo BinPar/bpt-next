@@ -79,6 +79,10 @@ def defaultHostname():
   end
 end
 
+def masterIngressName():
+  return defaultHostname().replace(".", "-") + "-master"
+end
+
 def replaceDefaultServiceNameInRules(rules):
   rulesDict = struct.decode(rules)
   for rule in rulesDict:
@@ -109,4 +113,4 @@ def recursiveLookupForStringAndReplace(obj, lookupString, newValue):
   return obj
 end
 
-utils = struct.make(recursiveLookupForStringAndReplace=recursiveLookupForStringAndReplace, replaceDefaultServiceNameInRules=replaceDefaultServiceNameInRules, certificateName=certificateName, defaultConfigMapName=defaultConfigMapName, imageName=imageName, isRelease=isRelease, deployName=deployName, serviceName=serviceName, ingressName=ingressName, defaultLabels=defaultLabels, defaultHostname=defaultHostname, namespaceName=namespaceName, monitorName=monitorName, projectName=projectName)
+utils = struct.make(recursiveLookupForStringAndReplace=recursiveLookupForStringAndReplace, replaceDefaultServiceNameInRules=replaceDefaultServiceNameInRules, certificateName=certificateName, defaultConfigMapName=defaultConfigMapName, imageName=imageName, isRelease=isRelease, isTest=isTest, masterIngressName=masterIngressName, deployName=deployName, serviceName=serviceName, ingressName=ingressName, defaultLabels=defaultLabels, defaultHostname=defaultHostname, namespaceName=namespaceName, monitorName=monitorName, projectName=projectName)

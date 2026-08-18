@@ -3,7 +3,7 @@
 #@ load("deploy.lib.yml", "getDeploy")
 #@ load("service.lib.yml", "getService")
 #@ load("serviceMonitor.lib.yml", "getServiceMonitor")
-#@ load("ingress.lib.yml", "getIngress", "getAdditionalIngresses")
+#@ load("ingress.lib.yml", "getIngress", "getMasterIngress", "getAdditionalIngresses")
 #@ load("issuer.lib.yml", "getIssuer", "getAdditionalIssuers")
 #@ load("volumes.lib.yml", "getVolumeStorages", "getVolumeClaims")
 #@ load("conf-map.lib.yml", "getDefaultConfigMap", "getValuesConfigMap")
@@ -20,6 +20,8 @@
 --- #@ getDeploy()
 --- #@ getService()
 --- #@ getServiceMonitor()
+#@ if/end not data.values.useOnlyAdditionalIngresses and data.values.environment == "test":
+--- #@ getMasterIngress()
 #@ if/end not data.values.useOnlyAdditionalIngresses:
 --- #@ getIngress()
 --- #@ getDefaultConfigMap()
