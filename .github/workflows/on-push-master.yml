@@ -94,7 +94,7 @@ jobs:
           rm -rf /tmp/docker-cache/buildx-cache-${{ github.repository }}
           mv /tmp/docker-cache/buildx-cache-${{ github.repository }}-new /tmp/docker-cache/buildx-cache-${{ github.repository }}
       - name: Setup Kubernetes Tools
-        uses: azure/setup-kubectl@v2.0
+        uses: azure/setup-kubectl@v3.0
         id: kubernetes-tools
         with:
           version: v1.22.8

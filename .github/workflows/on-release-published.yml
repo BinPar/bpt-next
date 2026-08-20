@@ -34,7 +34,7 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
       - name: Setup Kubernetes Tools
-        uses: azure/setup-kubectl@v2.0
+        uses: azure/setup-kubectl@v3.0
         id: kubernetes-tools
         with:
           version: v1.22.8
