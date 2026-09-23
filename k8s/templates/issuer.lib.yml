@@ -20,6 +20,8 @@ spec:
     #@ # la competicion por el host contra el master y el challenge nunca pasa.
     #@ # Es `class`, no `ingressClassName`: ese campo llego en cert-manager 1.12
     #@ # y el CRD vivo en zaun es 1.7.0.
+    #@ # `path-regex: exact` saca el solver como `location =`: sin el, las
+    #@ # locations regex de los minions de la app le ganan y el challenge da 404.
     solvers:
       - http01:
           ingress:
@@ -28,6 +30,7 @@ spec:
               metadata:
                 annotations:
                   nginx.org/mergeable-ingress-type: minion
+                  nginx.org/path-regex: exact
     #@ else:
     solvers:
       - http01:
